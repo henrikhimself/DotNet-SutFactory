@@ -11,7 +11,11 @@
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
-            "problemMatcher": "$msCompile"
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         },
         {
             "label": "test",
@@ -21,13 +25,29 @@
                 "test",
                 "${workspaceFolder}/UnitTest/SutFactory.UnitTest.csproj",
                 "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+                "/consoleloggerparameters:NoSummary",
+                "--collect:\"XPlat Code Coverage\"",
+                "--results-directory:${workspaceFolder}/Temp",
+                "--settings=coverlet.runsettings"
+    
             ],
             "problemMatcher": "$msCompile",
             "group": {
                 "kind": "test",
                 "isDefault": true
             }
+        },
+        {
+            "label": "update coverage report",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "reportgenerator",
+                "-reports:${workspaceFolder}/Temp/**/coverage.cobertura.xml",
+                "-targetdir:${workspaceFolder}/Temp/_CoverageReport",
+                "-reporttypes:HtmlInline_AzurePipelines"
+            ],
+            "problemMatcher": []
         }
     ]
 }
