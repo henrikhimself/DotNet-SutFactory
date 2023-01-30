@@ -1,0 +1,8 @@
+{
+   "msbuild": {
+      "loadProjectsOnDemand": false
+   },
+   "FormattingOptions": {
+      "EnableEditorConfigSupport": true
+   }
+}
