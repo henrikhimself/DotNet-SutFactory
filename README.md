@@ -1,2 +1,2 @@
-# DotNet-SutFactory
+# SutFactory
 
