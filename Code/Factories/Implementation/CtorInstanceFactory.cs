@@ -1,6 +1,4 @@
-﻿using Hj.SutFactory.Factories;
-
-namespace Hj.SutFactory.Factories.Implementation;
+﻿namespace Hj.SutFactory.Factories.Implementation;
 
 public sealed class CtorInstanceFactory : FactoryBase, ICtorInstanceFactory
 {

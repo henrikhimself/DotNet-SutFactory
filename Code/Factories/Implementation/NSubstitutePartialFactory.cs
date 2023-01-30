@@ -1,5 +1,4 @@
-﻿using Hj.SutFactory.Factories;
-using NSubstitute.Core;
+﻿using NSubstitute.Core;
 
 namespace Hj.SutFactory.Factories.Implementation;
 
