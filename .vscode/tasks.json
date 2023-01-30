@@ -38,7 +38,7 @@
             }
         },
         {
-            "label": "update coverage report",
+            "label": "update test coverage report",
             "command": "dotnet",
             "type": "process",
             "args": [
@@ -46,6 +46,21 @@
                 "-reports:${workspaceFolder}/Temp/**/coverage.cobertura.xml",
                 "-targetdir:${workspaceFolder}/Temp/_CoverageReport",
                 "-reporttypes:HtmlInline_AzurePipelines"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "view test coverage report",
+            "command": "",
+            "type": "process",
+            "windows": {
+                "command": "explorer"
+            },
+            "osx": {
+                "command": "open"
+            },
+            "args": [
+                "${workspaceFolder}\\Temp\\_CoverageReport\\index.html"
             ],
             "problemMatcher": []
         }
