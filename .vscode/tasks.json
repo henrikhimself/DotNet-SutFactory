@@ -28,7 +28,7 @@
                 "/consoleloggerparameters:NoSummary",
                 "--collect:\"XPlat Code Coverage\"",
                 "--results-directory:${workspaceFolder}/Temp",
-                "--settings=coverlet.runsettings"
+                "--settings:coverlet.runsettings"
     
             ],
             "problemMatcher": "$msCompile",
