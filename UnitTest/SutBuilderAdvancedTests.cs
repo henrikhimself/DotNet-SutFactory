@@ -1,7 +1,5 @@
 ﻿using Hj.SutFactory.UnitTest.TestData;
 
-#nullable disable
-
 namespace Hj.SutFactory.UnitTest;
 
 public class SutBuilderAdvancedTests

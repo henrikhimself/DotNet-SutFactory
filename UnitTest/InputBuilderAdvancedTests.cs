@@ -1,7 +1,5 @@
 ﻿using Hj.SutFactory.UnitTest.TestData;
 
-#nullable disable
-
 namespace Hj.SutFactory.UnitTest;
 
 public class InputBuilderAdvancedTests
@@ -12,8 +10,8 @@ public class InputBuilderAdvancedTests
     // arrange
     var inputBuilder = new SutBuilder().InputBuilder;
 
-    ClassInput classInput1 = null;
-    ClassInput classInput2 = null;
+    ClassInput? classInput1 = null;
+    ClassInput? classInput2 = null;
 
     // act
     inputBuilder.Advanced.Instance<ClassInput>().Configure(i => classInput1 = i);
@@ -31,8 +29,8 @@ public class InputBuilderAdvancedTests
     // arrange
     var inputBuilder = new SutBuilder().InputBuilder;
 
-    ClassInput classInput1 = null;
-    ClassInput classInput2 = null;
+    ClassInput? classInput1 = null;
+    ClassInput? classInput2 = null;
 
     // act
     inputBuilder.Advanced.SubstitutePartsOf<ClassInput>().Configure(i => classInput1 = i);
@@ -50,8 +48,8 @@ public class InputBuilderAdvancedTests
     // arrange
     var inputBuilder = new SutBuilder().InputBuilder;
 
-    IInterfaceInput interfaceInput1 = null;
-    IInterfaceInput interfaceInput2 = null;
+    IInterfaceInput? interfaceInput1 = null;
+    IInterfaceInput? interfaceInput2 = null;
 
     // act
     inputBuilder.Advanced.Substitute<IInterfaceInput>().Configure(i => interfaceInput1 = i);

@@ -1,7 +1,5 @@
 ﻿using Hj.SutFactory.Registries.Implementation;
 
-#nullable disable
-
 namespace Hj.SutFactory.UnitTest;
 
 public class RegistryKeyGeneratorTests

@@ -2,16 +2,15 @@
 using Hj.SutFactory.Factories.Implementation;
 using Hj.SutFactory.Registries;
 using Hj.SutFactory.Registries.Implementation;
+using Hj.SutFactory.ServiceLocation;
 
 namespace Hj.SutFactory;
 
 public class SutBuilder
 {
-  private readonly IServiceProvider? _externalServiceProvider;
-
+  private readonly ISutBuilderServiceProvider _serviceProvider;
   private readonly Lazy<IInputRegistry> _inputRegistry;
   private readonly Lazy<IInstanceFactory> _instanceFactory;
-  private readonly IServiceProvider _serviceProvider;
   private readonly Lazy<InputBuilder> _inputBuilder;
   private readonly Lazy<SutBuilderAdvanced> _sutBuilderAdvanced;
 
@@ -23,20 +22,17 @@ public class SutBuilder
   {
   }
 
-  public SutBuilder(IServiceProvider? serviceProvider)
+  public SutBuilder(IServiceProvider? externalServiceProvider)
   {
     T GetService<T>(Func<T> factory)
         where T : class
     {
-      if (serviceProvider?.GetService(typeof(T)) is not T service)
+      if (externalServiceProvider?.GetService(typeof(T)) is not T service)
       {
         service = factory();
       }
       return service;
     }
-
-    _externalServiceProvider = serviceProvider;
-    _serviceProvider = new SutBuilderServiceProvider(this);
 
     _instanceFactory = new Lazy<IInstanceFactory>(() => GetService<IInstanceFactory>(() =>
     {
@@ -53,21 +49,17 @@ public class SutBuilder
       return new InputRegistry(registryKeyGenerator, _registryBackingStore);
     }));
 
+    _serviceProvider = new SutBuilderServiceProvider(externalServiceProvider, _inputRegistry, _instanceFactory);
+
     _inputBuilder = new Lazy<InputBuilder>(() => new InputBuilder(_serviceProvider, _instanceFactory.Value, _inputRegistry.Value));
     _sutBuilderAdvanced = new Lazy<SutBuilderAdvanced>(() => new SutBuilderAdvanced(this));
-
-    Initialize();
   }
 
   public InputBuilder InputBuilder => _inputBuilder.Value;
 
-  public IServiceProvider ServiceProvider => _serviceProvider;
+  public ISutBuilderServiceProvider ServiceProvider => _serviceProvider;
 
   public SutBuilderAdvanced Advanced => _sutBuilderAdvanced.Value;
-
-  public virtual void Initialize()
-  {
-  }
 
   public T CreateSut<T>()
       where T : class => (T)_instanceFactory.Value.AutoCreate(typeof(T));
@@ -83,21 +75,5 @@ public class SutBuilder
     public T SubstitutePartsOf<T>() => (T)_sutBuilder._instanceFactory.Value.PartialInstanceFactory.Create(typeof(T));
 
     public T Substitute<T>() => (T)_sutBuilder._instanceFactory.Value.SubstituteFactory.Create(typeof(T));
-  }
-
-  public class SutBuilderServiceProvider : IServiceProvider
-  {
-    private readonly SutBuilder _sutBuilder;
-
-    public SutBuilderServiceProvider(SutBuilder sutBuilder) => _sutBuilder = sutBuilder;
-
-    public object? GetService(Type type)
-    {
-      var value = _sutBuilder._inputRegistry.Value.GetOrCreateValue<object?>(
-          type,
-          false,
-          () => _sutBuilder._externalServiceProvider?.GetService(type) ?? _sutBuilder._instanceFactory.Value.AutoCreate(type));
-      return value;
-    }
   }
 }

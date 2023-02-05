@@ -1,8 +1,6 @@
 ﻿using Hj.SutFactory.UnitTest.TestData;
 using NSubstitute;
 
-#nullable disable
-
 namespace Hj.SutFactory.UnitTest;
 
 public class SutBuilderTests
@@ -43,7 +41,7 @@ public class SutBuilderTests
     // arrange
     var sutBuilder = new SutBuilder();
 
-    IServiceProvider serviceProvider = null;
+    IServiceProvider? serviceProvider = null;
 
     var inputBuilder = sutBuilder.InputBuilder;
     inputBuilder.AutoInstance<IInterfaceInput>()

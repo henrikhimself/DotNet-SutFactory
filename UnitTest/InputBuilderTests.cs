@@ -1,7 +1,4 @@
 ﻿using Hj.SutFactory.UnitTest.TestData;
-using Microsoft.Extensions.DependencyInjection;
-
-#nullable disable
 
 namespace Hj.SutFactory.UnitTest;
 
