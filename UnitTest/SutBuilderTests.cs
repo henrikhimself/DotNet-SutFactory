@@ -12,10 +12,10 @@ public class SutBuilderTests
     var sutBuilder = new SutBuilder();
 
     var inputBuilder = sutBuilder.InputBuilder;
-    inputBuilder.Instance<NullInput>(null);
-    inputBuilder.AutoInstance<IAutoInterfaceInput, AutoImplementationInput>();
-    inputBuilder.AutoInstance<AutoImplementationInput>();
-    inputBuilder.Instance(() => new InstanceInput());
+    inputBuilder.Instance<IAutoInterfaceInput, AutoImplementationInput>();
+    inputBuilder.Instance<AutoImplementationInput>();
+    inputBuilder.Advanced.Instance<NullInput>(null);
+    inputBuilder.Advanced.Instance(() => new InstanceInput());
 
     // act
     var result = sutBuilder.CreateSut<TestSut>();
@@ -44,7 +44,7 @@ public class SutBuilderTests
     IServiceProvider? serviceProvider = null;
 
     var inputBuilder = sutBuilder.InputBuilder;
-    inputBuilder.AutoInstance<IInterfaceInput>()
+    inputBuilder.Instance<IInterfaceInput>()
       .Configure((i, sp) =>
       {
         serviceProvider = sp;

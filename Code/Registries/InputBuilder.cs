@@ -15,29 +15,46 @@ public sealed class InputBuilder
     Advanced = new InputBuilderAdvanced(serviceProvider, instanceFactory, inputRegistry);
   }
 
+  /// <summary>
+  /// Gets advanced methods that provide more control of how instances is created.
+  /// </summary>
   public InputBuilderAdvanced Advanced { get; }
 
-  public InputBuilderConfigurator<T> AutoInstance<T>()
-      where T : class => AutoInstance<T, T>();
+  /// <summary>
+  /// Creates an instance of type T as either a concrete type, a partial substitute or as a substitute.
+  /// </summary>
+  /// <typeparam name="T">Type of instance to create and register in service provider.</typeparam>
+  /// <returns>An instance configurator.</returns>
+  public InputBuilderConfigurator<T> Instance<T>()
+    where T : class => Instance<T, T>();
 
-  public InputBuilderConfigurator<TInterface> AutoInstance<TInterface, TImplementation>()
-      where TInterface : class
-      where TImplementation : class, TInterface
+  /// <summary>
+  /// Creates an instance of type TImplementation as either a concrete type, a partial substitute or as a substitute.
+  /// </summary>
+  /// <typeparam name="TInterface">Type of interface to register in service provider.</typeparam>
+  /// <typeparam name="TImplementation">Type of instance to create.</typeparam>
+  /// <returns>An instance configurator.</returns>
+  public InputBuilderConfigurator<TInterface> Instance<TInterface, TImplementation>()
+    where TInterface : class
+    where TImplementation : class, TInterface
   {
     var value = _inputRegistry.GetOrCreateValue(
-        typeof(TInterface),
-        true,
-        () => (TImplementation)_instanceFactory.AutoCreate(typeof(TImplementation)));
+      typeof(TInterface),
+      true,
+      () => (TImplementation)_instanceFactory.AutoCreate(typeof(TImplementation)));
     return new InputBuilderConfigurator<TInterface>(_serviceProvider, value);
   }
 
-  public InputBuilderConfigurator<T> Instance<T>(Func<T?>? instanceFactory)
-      where T : class
+  /// <summary>
+  /// Adds an already constructed instance.
+  /// </summary>
+  /// <typeparam name="T">Type of T to register in service provider.</typeparam>
+  /// <param name="instance">An instance.</param>
+  public void Instance<T>(T instance)
   {
-    var value = _inputRegistry.GetOrCreateValue(
-        typeof(T),
-        true,
-        instanceFactory ??= () => null);
-    return new InputBuilderConfigurator<T>(_serviceProvider, value);
+    _ = _inputRegistry.GetOrCreateValue(
+      typeof(T),
+      true,
+      () => instance);
   }
 }

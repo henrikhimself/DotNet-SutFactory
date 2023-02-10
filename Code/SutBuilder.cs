@@ -6,7 +6,7 @@ using Hj.SutFactory.ServiceLocation;
 
 namespace Hj.SutFactory;
 
-public class SutBuilder
+public class SutBuilder : ISutBuilderProvider
 {
   private readonly ISutBuilderServiceProvider _serviceProvider;
   private readonly Lazy<IInputRegistry> _inputRegistry;
@@ -63,6 +63,8 @@ public class SutBuilder
 
   public T CreateSut<T>()
       where T : class => (T)_instanceFactory.Value.AutoCreate(typeof(T));
+
+  public SutBuilder GetSutBuilder() => this;
 
   public class SutBuilderAdvanced
   {

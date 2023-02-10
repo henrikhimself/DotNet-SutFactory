@@ -11,7 +11,7 @@ public class InputBuilderTests
     var sutBuilder = new SutBuilder();
     var inputBuilder = sutBuilder.InputBuilder;
 
-    inputBuilder.Instance<ClassInput>(null).Configure((instance, serviceProvider) => instance.Value = new object());
+    inputBuilder.Advanced.Instance<ClassInput>(null).Configure((instance, serviceProvider) => instance.Value = new object());
 
     // act
     var result = sutBuilder.ServiceProvider.GetService<ClassInput>();
