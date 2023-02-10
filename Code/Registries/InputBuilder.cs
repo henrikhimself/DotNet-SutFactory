@@ -44,17 +44,4 @@ public sealed class InputBuilder
       () => (TImplementation)_instanceFactory.AutoCreate(typeof(TImplementation)));
     return new InputBuilderConfigurator<TInterface>(_serviceProvider, value);
   }
-
-  /// <summary>
-  /// Adds an already constructed instance.
-  /// </summary>
-  /// <typeparam name="T">Type of T to register in service provider.</typeparam>
-  /// <param name="instance">An instance.</param>
-  public void Instance<T>(T instance)
-  {
-    _ = _inputRegistry.GetOrCreateValue(
-      typeof(T),
-      true,
-      () => instance);
-  }
 }
