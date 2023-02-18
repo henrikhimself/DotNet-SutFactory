@@ -1,6 +1,6 @@
 ﻿namespace Hj.SutFactory.ServiceLocation;
 
-public class SutBuilderServiceProvider : ISutBuilderServiceProvider
+public class SutBuilderServiceProvider : IServiceProvider
 {
   private readonly IServiceProvider? _externalServiceProvider;
   private readonly Lazy<IInputRegistry> _inputRegistry;
@@ -18,12 +18,17 @@ public class SutBuilderServiceProvider : ISutBuilderServiceProvider
 
   public object? GetService(Type type)
   {
-    var value = _inputRegistry.Value.GetOrCreateValue<object?>(
+    var value = _externalServiceProvider?.GetService(type);
+
+    if (value is null)
+    {
+      value = _inputRegistry.Value.GetOrCreateValue(
+        type,
         type,
         false,
-        () => _externalServiceProvider?.GetService(type) ?? _instanceFactory.Value.AutoCreate(type));
+        () => _instanceFactory.Value.AutoCreate(type));
+    }
+
     return value;
   }
-
-  public T GetService<T>() => (T)GetService(typeof(T))!;
 }

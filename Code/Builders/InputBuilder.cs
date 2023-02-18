@@ -1,4 +1,6 @@
-﻿namespace Hj.SutFactory.Registries;
+﻿using Hj.SutFactory.Builders.Implementation;
+
+namespace Hj.SutFactory.Builders;
 
 public sealed class InputBuilder
 {
@@ -40,6 +42,7 @@ public sealed class InputBuilder
   {
     var value = _inputRegistry.GetOrCreateValue(
       typeof(TInterface),
+      typeof(TImplementation),
       true,
       () => (TImplementation)_instanceFactory.AutoCreate(typeof(TImplementation)));
     return new InputBuilderConfigurator<TInterface>(_serviceProvider, value);

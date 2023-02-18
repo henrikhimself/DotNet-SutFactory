@@ -2,5 +2,5 @@
 
 public interface IInputRegistry
 {
-  T? GetOrCreateValue<T>(Type type, bool isSingleton, Func<T?> valueFactory);
+  object? GetOrCreateValue(Type serviceType, Type implementationType, bool isSingleton, Func<object?> valueFactory);
 }

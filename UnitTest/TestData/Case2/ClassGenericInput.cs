@@ -1,4 +1,4 @@
-﻿namespace Hj.SutFactory.UnitTest.TestData;
+﻿namespace Hj.SutFactory.UnitTest.TestData.Case2;
 
 public class ClassGenericInput<T>
 {

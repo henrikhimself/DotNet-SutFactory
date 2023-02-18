@@ -1,41 +1,79 @@
-﻿namespace Hj.SutFactory.Registries;
+﻿using Hj.SutFactory.Registries.Implementation;
+
+namespace Hj.SutFactory.Registries;
 
 public class InputRegistry : IInputRegistry
 {
   private readonly IRegistryKeyGenerator _registryKeyGenerator;
-  private readonly IDictionary<string, object?> _backingStore;
+  private readonly InputCollection _inputCollection;
 
   public InputRegistry(
       IRegistryKeyGenerator registryKeyGenerator,
-      IDictionary<string, object?> backingStore)
+      InputCollection inputCollection)
   {
     _registryKeyGenerator = registryKeyGenerator;
-    _backingStore = backingStore;
+    _inputCollection = inputCollection;
   }
 
-  public T? GetOrCreateValue<T>(Type type, bool isSingleton, Func<T?> valueFactory)
+  public object? GetOrCreateValue(Type serviceType, Type implementationType, bool isSingleton, Func<object?> valueFactory)
   {
-    object? value;
+    object? value = null;
 
-    var key = _registryKeyGenerator.GenerateKey(type);
-    if (key is null)
+    var serviceTypeKey = _registryKeyGenerator.GenerateKey(serviceType);
+    if (serviceTypeKey is not null)
     {
-      value = null;
-    }
-    else if (_backingStore.ContainsKey(key))
-    {
-      value = _backingStore[key];
-    }
-    else
-    {
-      value = valueFactory();
-
-      if (isSingleton)
+      if (!TryGet(serviceTypeKey, serviceType, out value))
       {
-        _backingStore.Add(key, value);
+        value = Create(serviceTypeKey, implementationType, isSingleton, valueFactory);
       }
     }
 
-    return (T?)value;
+    return value;
+  }
+
+  private bool TryGet(string typeKey, Type serviceType, out object? value)
+  {
+    value = default;
+
+    if (serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+    {
+      var genericTypeKey = _registryKeyGenerator.GenerateKey(serviceType.GetGenericArguments()[0]);
+      if (genericTypeKey is null)
+      {
+        return false;
+      }
+      var valueList = _inputCollection.GetAllFactories(genericTypeKey)
+        .Select(valueFactory => valueFactory())
+        .AsEnumerable();
+
+      value = valueList;
+      return true;
+    }
+
+    if (_inputCollection.TryGetFactory(typeKey, out var registeredValueFactory))
+    {
+      value = registeredValueFactory();
+      return true;
+    }
+
+    return false;
+  }
+
+  private object? Create(string typeKey, Type implementationType, bool isSingleton, Func<object?> valueFactory)
+  {
+    var value = valueFactory();
+
+    var interfaceKeys = implementationType.GetInterfaces()
+        .Select(interfaceType => _registryKeyGenerator.GenerateKey(interfaceType));
+    if (isSingleton)
+    {
+      _inputCollection.Add(typeKey, interfaceKeys, () => value);
+    }
+    else
+    {
+      _inputCollection.Add(typeKey, interfaceKeys, valueFactory);
+    }
+
+    return value;
   }
 }

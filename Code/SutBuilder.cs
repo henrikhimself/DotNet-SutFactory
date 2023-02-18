@@ -1,4 +1,5 @@
-﻿using Hj.SutFactory.Factories;
+﻿using Hj.SutFactory.Builders;
+using Hj.SutFactory.Factories;
 using Hj.SutFactory.Factories.Implementation;
 using Hj.SutFactory.Registries;
 using Hj.SutFactory.Registries.Implementation;
@@ -8,14 +9,14 @@ namespace Hj.SutFactory;
 
 public class SutBuilder : ISutBuilderProvider
 {
-  private readonly ISutBuilderServiceProvider _serviceProvider;
+  private readonly IServiceProvider _serviceProvider;
   private readonly Lazy<IInputRegistry> _inputRegistry;
   private readonly Lazy<IInstanceFactory> _instanceFactory;
   private readonly Lazy<InputBuilder> _inputBuilder;
   private readonly Lazy<SutBuilderAdvanced> _sutBuilderAdvanced;
 
   [ThreadStatic]
-  private IDictionary<string, object?>? _registryBackingStore;
+  private InputCollection? _registryInputCollection;
 
   public SutBuilder()
       : this(null)
@@ -45,8 +46,8 @@ public class SutBuilder : ISutBuilderProvider
     _inputRegistry = new Lazy<IInputRegistry>(() => GetService<IInputRegistry>(() =>
     {
       var registryKeyGenerator = GetService<IRegistryKeyGenerator>(() => new RegistryKeyGenerator());
-      _registryBackingStore = new Dictionary<string, object?>();
-      return new InputRegistry(registryKeyGenerator, _registryBackingStore);
+      _registryInputCollection = new InputCollection();
+      return new InputRegistry(registryKeyGenerator, _registryInputCollection);
     }));
 
     _serviceProvider = new SutBuilderServiceProvider(externalServiceProvider, _inputRegistry, _instanceFactory);
@@ -57,7 +58,7 @@ public class SutBuilder : ISutBuilderProvider
 
   public InputBuilder InputBuilder => _inputBuilder.Value;
 
-  public ISutBuilderServiceProvider ServiceProvider => _serviceProvider;
+  public IServiceProvider ServiceProvider => _serviceProvider;
 
   public SutBuilderAdvanced Advanced => _sutBuilderAdvanced.Value;
 

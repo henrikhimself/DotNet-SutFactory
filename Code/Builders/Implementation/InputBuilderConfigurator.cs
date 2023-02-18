@@ -1,12 +1,12 @@
-namespace Hj.SutFactory.Registries;
+﻿namespace Hj.SutFactory.Builders.Implementation;
 
 public sealed class InputBuilderConfigurator<T>
     where T : class
 {
   private readonly IServiceProvider _serviceProvider;
-  private readonly T? _value;
+  private readonly object? _value;
 
-  public InputBuilderConfigurator(IServiceProvider serviceProvider, T? value)
+  public InputBuilderConfigurator(IServiceProvider serviceProvider, object? value)
   {
     _serviceProvider = serviceProvider;
     _value = value;
@@ -16,7 +16,7 @@ public sealed class InputBuilderConfigurator<T>
   {
     if (_value is not null && action is not null)
     {
-      action(_value!);
+      action((T)_value!);
     }
   }
 
@@ -24,7 +24,7 @@ public sealed class InputBuilderConfigurator<T>
   {
     if (_value is not null && action is not null)
     {
-      action(_value!, _serviceProvider);
+      action((T)_value!, _serviceProvider);
     }
   }
 }

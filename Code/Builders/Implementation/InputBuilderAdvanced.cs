@@ -1,4 +1,4 @@
-﻿namespace Hj.SutFactory.Registries;
+﻿namespace Hj.SutFactory.Builders.Implementation;
 
 public sealed class InputBuilderAdvanced
 {
@@ -37,17 +37,31 @@ public sealed class InputBuilderAdvanced
   /// Beware that using a factory is discouraged as it may make using a sut builder pointless. However, if an instance
   /// has multiple constructors or is somehow complex to create, this method can help with registering it as in input.
   /// </summary>
-  /// <typeparam name="T">Type to register in service provider.</typeparam>
+  /// <typeparam name="T">Type of instance to create.</typeparam>
   /// <param name="instanceFactory">A func that creates an instance of T.</param>
   /// <returns>An instance configurator.</returns>
   public InputBuilderConfigurator<T> Instance<T>(Func<T?>? instanceFactory)
-    where T : class
+    where T : class => Instance<T, T>(instanceFactory);
+
+  /// <summary>
+  /// Creates an instance of type T using an instance factory.
+  /// Beware that using a factory is discouraged as it may make using a sut builder pointless. However, if an instance
+  /// has multiple constructors or is somehow complex to create, this method can help with registering it as in input.
+  /// </summary>
+  /// <typeparam name="TInterface">Type of interface to register in service provider.</typeparam>
+  /// <typeparam name="TImplementation">Type of instance to create.</typeparam>
+  /// <param name="instanceFactory">A func that creates an instance of T.</param>
+  /// <returns>An instance configurator.</returns>
+  public InputBuilderConfigurator<TImplementation> Instance<TInterface, TImplementation>(Func<TImplementation?>? instanceFactory)
+    where TInterface : class
+    where TImplementation : class, TInterface
   {
     var value = _inputRegistry.GetOrCreateValue(
-      typeof(T),
+      typeof(TInterface),
+      typeof(TImplementation),
       true,
       instanceFactory ??= () => null);
-    return new InputBuilderConfigurator<T>(_serviceProvider, value);
+    return new InputBuilderConfigurator<TImplementation>(_serviceProvider, value);
   }
 
   /// <summary>
@@ -69,7 +83,8 @@ public sealed class InputBuilderAdvanced
   private InputBuilderConfigurator<T> GetOrCreateValue<T>(Func<IInstanceFactory, object> valueFactory)
     where T : class
   {
-    var value = (T?)_inputRegistry.GetOrCreateValue(
+    var value = _inputRegistry.GetOrCreateValue(
+      typeof(T),
       typeof(T),
       true,
       () => valueFactory(_instanceFactory));
