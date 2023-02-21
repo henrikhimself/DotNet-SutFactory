@@ -37,22 +37,21 @@ public class InputRegistry : IInputRegistry
 
     if (serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
     {
-      var genericTypeKey = _registryKeyGenerator.GenerateKey(serviceType.GetGenericArguments()[0]);
+      var genericType = serviceType.GetGenericArguments()[0];
+      var genericTypeKey = _registryKeyGenerator.GenerateKey(genericType);
       if (genericTypeKey is null)
       {
         return false;
       }
-      var valueList = _inputCollection.GetAllFactories(genericTypeKey)
-        .Select(valueFactory => valueFactory())
-        .AsEnumerable();
 
-      value = valueList;
-      return true;
+      if (_inputCollection.TryGetList(genericTypeKey, genericType, out value))
+      {
+        return true;
+      }
     }
 
-    if (_inputCollection.TryGetFactory(typeKey, out var registeredValueFactory))
+    if (_inputCollection.TryGet(typeKey, out value))
     {
-      value = registeredValueFactory();
       return true;
     }
 
@@ -67,11 +66,11 @@ public class InputRegistry : IInputRegistry
         .Select(interfaceType => _registryKeyGenerator.GenerateKey(interfaceType));
     if (isSingleton)
     {
-      _inputCollection.Add(typeKey, interfaceKeys, () => value);
+      _inputCollection.AddFactory(typeKey, interfaceKeys, () => value);
     }
     else
     {
-      _inputCollection.Add(typeKey, interfaceKeys, valueFactory);
+      _inputCollection.AddFactory(typeKey, interfaceKeys, valueFactory);
     }
 
     return value;

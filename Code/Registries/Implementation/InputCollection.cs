@@ -1,4 +1,6 @@
-﻿namespace Hj.SutFactory.Registries.Implementation;
+﻿using System.Collections;
+
+namespace Hj.SutFactory.Registries.Implementation;
 
 public sealed class InputCollection
 {
@@ -12,9 +14,9 @@ public sealed class InputCollection
     _interfaceKeysMap = new Dictionary<string, List<string>>();
   }
 
-  public void Add(string key, IEnumerable<string?> interfaceKeys, Func<object?> value)
+  public void AddFactory(string key, IEnumerable<string?> interfaceKeys, Func<object?> valueFactory)
   {
-    _factoryMap.Add(key, value);
+    _factoryMap.Add(key, valueFactory);
 
     foreach (var interfaceKey in interfaceKeys)
     {
@@ -31,20 +33,45 @@ public sealed class InputCollection
     }
   }
 
-  public IEnumerable<Func<object?>> GetAllFactories(string key)
+  public bool TryGet(string key, out object? value)
   {
-    if (_interfaceKeysMap.TryGetValue(key, out var factoryKeys))
+    if (_factoryMap.TryGetValue(key, out var valueFactory))
     {
-      foreach (var factoryKey in factoryKeys)
-      {
-        var factory = _factoryMap[factoryKey];
-        yield return factory;
-      }
+      value = valueFactory();
+      return true;
     }
+
+    value = default;
+    return false;
   }
 
-  public bool TryGetFactory(string key, out Func<object?> value)
+  public bool TryGetList(string key, Type type, out object? value)
   {
-    return _factoryMap.TryGetValue(key, out value!);
+    var factoryKeys = new List<string>();
+    if (_interfaceKeysMap.TryGetValue(key, out var factoryKeysByInterface))
+    {
+      factoryKeys.AddRange(factoryKeysByInterface);
+    }
+    if (_factoryMap.ContainsKey(key))
+    {
+      factoryKeys.Add(key);
+    }
+
+    if (!factoryKeys.Any())
+    {
+      value = default;
+      return false;
+    }
+
+    var valueList = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(type))!;
+    foreach (var factoryKey in factoryKeys)
+    {
+      var valueFactory = _factoryMap[factoryKey];
+      var item = valueFactory();
+      valueList.Add(item);
+    }
+
+    value = valueList;
+    return true;
   }
 }
