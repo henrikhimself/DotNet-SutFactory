@@ -9,14 +9,14 @@ namespace Hj.SutFactory;
 
 public class SutBuilder : ISutBuilderProvider
 {
+  [ThreadStatic]
+  private static InputCollection? _registryInputCollection;
+
   private readonly IServiceProvider _serviceProvider;
   private readonly Lazy<IInputRegistry> _inputRegistry;
   private readonly Lazy<IInstanceFactory> _instanceFactory;
   private readonly Lazy<InputBuilder> _inputBuilder;
   private readonly Lazy<SutBuilderAdvanced> _sutBuilderAdvanced;
-
-  [ThreadStatic]
-  private InputCollection? _registryInputCollection;
 
   public SutBuilder()
       : this(null)
