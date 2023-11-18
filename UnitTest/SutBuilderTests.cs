@@ -116,7 +116,7 @@ public class SutBuilderTests
     var sutBuilder = new SutBuilder();
 
     // act & assert
-    Assert.Throws<InvalidOperationException>(() => sutBuilder.CreateSut<Case4AmbiguousCtorSut>());
+    Assert.Throws<InvalidOperationException>(sutBuilder.CreateSut<Case4AmbiguousCtorSut>);
   }
 
   [Fact]
@@ -171,56 +171,4 @@ public class SutBuilderTests
     Assert.NotNull(result.ClassPartialSubstituteInput);
     Assert.NotNull(result.IInterfaceSubstituteInput);
   }
-
-  /*
-  [Fact]
-  public void CreateSut_GivenConfigurenWithTAndServiceProvider_ReturnsInstance()
-  {
-    // arrange
-    var sutBuilder = new SutBuilder();
-
-    IServiceProvider? serviceProvider = null;
-
-    var inputBuilder = sutBuilder.InputBuilder;
-    inputBuilder.Instance<IInterfaceInput>()
-      .Configure((i, sp) =>
-      {
-        serviceProvider = sp;
-        i.IsTrue().Returns(true);
-      });
-
-    var sut = sutBuilder.CreateSut<Case1Sut>();
-
-    // act
-    var result = sutBuilder.CreateSut<Case1Sut>();
-
-    // assert
-    Assert.NotNull(serviceProvider);
-    Assert.True(result.InterfaceInputValue.IsTrue());
-  }
-
-  [Fact]
-  public void CreateSut_GivenAmbiguousCtorInput_Throws()
-  {
-    // arrange
-    var sutBuilder = new SutBuilder();
-
-    // act & assert
-    Assert.Throws<InvalidOperationException>(() => sutBuilder.CreateSut<TestAmbiguousCtorSut>());
-  }
-
-  [Fact]
-  public void GetService_GivenType_ReturnsInstance()
-  {
-    // arrange
-    var serviceProvider = new SutBuilder().ServiceProvider;
-
-    // act
-    var result = serviceProvider.GetService(typeof(Case1Sut));
-
-    // assert
-    Assert.NotNull(result);
-    Assert.NotSame(result, serviceProvider.GetService(typeof(Case1Sut)));
-  }
-  */
 }
