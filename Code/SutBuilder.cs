@@ -32,6 +32,7 @@ public class SutBuilder : ISutBuilderProvider
       {
         service = factory();
       }
+
       return service;
     }
 

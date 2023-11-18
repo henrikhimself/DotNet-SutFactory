@@ -29,6 +29,7 @@ public sealed class InputCollection
       {
         _interfaceKeysMap.Add(interfaceKey, keyList = new List<string>());
       }
+
       keyList.Add(key);
     }
   }
@@ -52,6 +53,7 @@ public sealed class InputCollection
     {
       factoryKeys.AddRange(factoryKeysByInterface);
     }
+
     if (_factoryMap.ContainsKey(key))
     {
       factoryKeys.Add(key);
