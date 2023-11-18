@@ -1,3 +1,10 @@
 {
-    "dotnet.defaultSolution": "SutFactory.sln"
+    "dotnet.defaultSolution": "SutFactory.sln",
+    "editor.minimap.enabled": false,
+    "files.exclude": {
+      "**/bin": true,
+      "**/obj": true,
+      "**/.config": true,
+      "TestReport": true
+    },
 }

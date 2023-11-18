@@ -1,68 +1,30 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "build",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build",
-                "${workspaceFolder}/SutFactory.sln",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
-        },
-        {
-            "label": "test",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "test",
-                "${workspaceFolder}/UnitTest/SutFactory.UnitTest.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary",
-                "--collect:\"XPlat Code Coverage\"",
-                "--results-directory:${workspaceFolder}/Temp",
-                "--settings:coverlet.runsettings"
-    
-            ],
-            "problemMatcher": "$msCompile",
-            "group": {
-                "kind": "test",
-                "isDefault": true
-            }
-        },
-        {
-            "label": "update test coverage report",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "reportgenerator",
-                "-reports:${workspaceFolder}/Temp/**/coverage.cobertura.xml",
-                "-targetdir:${workspaceFolder}/Temp/_CoverageReport",
-                "-reporttypes:HtmlInline_AzurePipelines"
-            ],
-            "problemMatcher": []
-        },
-        {
-            "label": "view test coverage report",
-            "command": "",
-            "type": "process",
-            "windows": {
-                "command": "explorer"
-            },
-            "osx": {
-                "command": "open"
-            },
-            "args": [
-                "${workspaceFolder}\\Temp\\_CoverageReport\\index.html"
-            ],
-            "problemMatcher": []
-        }
-    ]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "test",
+      "type": "shell",
+      "command": "${workspaceFolder}/Invoke-Test.ps1",
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "view test report",
+      "command": "",
+      "type": "process",
+      "windows": {
+        "command": "explorer"
+      },
+      "osx": {
+        "command": "open"
+      },
+      "args": [
+        "${workspaceFolder}/TestReport/index.html"
+      ],
+      "problemMatcher": []
+    }
+  ]
 }
