@@ -452,8 +452,14 @@ dotnet_diagnostic.IDE0200.severity = warning
 dotnet_style_allow_multiple_blank_lines_experimental = false
 dotnet_diagnostic.IDE2000.severity = warning
 
-# A closing parenthesis within a C# statement is not spaced correctly.
+# The spacing around a C# keyword is incorrect
+dotnet_diagnostic.SA1000.severity = silent
+
+# A closing parenthesis within a C# statement is not spaced correctly
 dotnet_diagnostic.SA1009.severity = silent
+
+# An opening square bracket within a C# statement is not spaced correctly
+dotnet_diagnostic.SA1010.severity = silent
 
 # SA1101: A call to an instance member of the local class or a base class is not prefixed with 'this.', within a C# code file
 dotnet_diagnostic.SA1101.severity = silent

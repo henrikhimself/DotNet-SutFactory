@@ -57,7 +57,7 @@ public class InputRegistry(
     var value = valueFactory();
 
     var interfaceKeys = implementationType.GetInterfaces()
-        .Select(interfaceType => _registryKeyGenerator.GenerateKey(interfaceType));
+        .Select(_registryKeyGenerator.GenerateKey);
     if (isSingleton)
     {
       _inputCollection.AddFactory(typeKey, interfaceKeys, () => value);

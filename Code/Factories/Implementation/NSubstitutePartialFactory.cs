@@ -17,7 +17,7 @@ public sealed class NSubstitutePartialFactory(IServiceProvider serviceProvider) 
 
     var parameters = GetConstructorParameters(ctor, _serviceProvider);
 
-    var instance = _nSubstituteFactory.CreatePartial(new Type[] { type }, parameters!);
+    var instance = _nSubstituteFactory.CreatePartial([type], parameters!);
     return instance;
   }
 }

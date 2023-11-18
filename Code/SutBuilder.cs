@@ -9,9 +9,7 @@ namespace Hj.SutFactory;
 
 public class SutBuilder : ISutBuilderProvider
 {
-  [ThreadStatic]
-  private static InputCollection? _registryInputCollection;
-
+  private readonly InputCollection? _registryInputCollection = new();
   private readonly IServiceProvider _serviceProvider;
   private readonly Lazy<IInputRegistry> _inputRegistry;
   private readonly Lazy<IInstanceFactory> _instanceFactory;
@@ -47,7 +45,6 @@ public class SutBuilder : ISutBuilderProvider
     _inputRegistry = new Lazy<IInputRegistry>(() => GetService<IInputRegistry>(() =>
     {
       var registryKeyGenerator = GetService<IRegistryKeyGenerator>(() => new RegistryKeyGenerator());
-      _registryInputCollection = new InputCollection();
       return new InputRegistry(registryKeyGenerator, _registryInputCollection);
     }));
 

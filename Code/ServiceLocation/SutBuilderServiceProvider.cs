@@ -9,19 +9,13 @@ public class SutBuilderServiceProvider(
   private readonly Lazy<IInputRegistry> _inputRegistry = inputRegistry;
   private readonly Lazy<IInstanceFactory> _instanceFactory = instanceFactory;
 
-  public object? GetService(Type type)
+  public object? GetService(Type serviceType)
   {
-    var value = _externalServiceProvider?.GetService(type);
-
-    if (value is null)
-    {
-      value = _inputRegistry.Value.GetOrCreateValue(
-        type,
-        type,
+    var value = _externalServiceProvider?.GetService(serviceType) ?? _inputRegistry.Value.GetOrCreateValue(
+        serviceType,
+        serviceType,
         false,
-        () => _instanceFactory.Value.AutoCreate(type));
-    }
-
+        () => _instanceFactory.Value.AutoCreate(serviceType));
     return value;
   }
 }

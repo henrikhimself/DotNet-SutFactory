@@ -2,17 +2,17 @@
 
 public sealed class RegistryKeyGenerator : IRegistryKeyGenerator
 {
-  private static readonly string[] ExcludedAssemblyQualifiedNames = new[]
-  {
+  private static readonly string[] _excludedAssemblyQualifiedNames =
+  [
     typeof(object).AssemblyQualifiedName!,
     typeof(object).GetType().AssemblyQualifiedName!,
-  };
+  ];
 
   public string? GenerateKey(Type type)
   {
     var key = type.AssemblyQualifiedName;
 
-    if (ExcludedAssemblyQualifiedNames.Contains(key))
+    if (_excludedAssemblyQualifiedNames.Contains(key))
     {
       key = null;
     }

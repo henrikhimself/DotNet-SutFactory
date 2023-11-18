@@ -27,7 +27,7 @@ public sealed class InputCollection
 
       if (!_interfaceKeysMap.TryGetValue(interfaceKey, out var keyList))
       {
-        _interfaceKeysMap.Add(interfaceKey, keyList = new List<string>());
+        _interfaceKeysMap.Add(interfaceKey, keyList = []);
       }
 
       keyList.Add(key);
@@ -59,7 +59,7 @@ public sealed class InputCollection
       factoryKeys.Add(key);
     }
 
-    if (!factoryKeys.Any())
+    if (factoryKeys.Count == 0)
     {
       value = default;
       return false;

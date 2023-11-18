@@ -10,7 +10,7 @@ public sealed class NSubstituteSubstituteFactory : ISubstituteFactory
 
   public object Create(params Type[] typeToSubstitute)
   {
-    var instance = _nSubstituteFactory.Create(typeToSubstitute, Array.Empty<object>());
+    var instance = _nSubstituteFactory.Create(typeToSubstitute, []);
     return instance;
   }
 }

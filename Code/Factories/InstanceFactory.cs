@@ -5,11 +5,11 @@ public class InstanceFactory(
   IPartialInstanceFactory partialInstanceFactory,
   ISubstituteFactory substituteFactory) : IInstanceFactory
 {
-  public ICtorInstanceFactory CtorInstanceFactory { get; private set; } = ctorInstanceFactory;
+  public ICtorInstanceFactory CtorInstanceFactory { get; } = ctorInstanceFactory;
 
-  public IPartialInstanceFactory PartialInstanceFactory { get; private set; } = partialInstanceFactory;
+  public IPartialInstanceFactory PartialInstanceFactory { get; } = partialInstanceFactory;
 
-  public ISubstituteFactory SubstituteFactory { get; private set; } = substituteFactory;
+  public ISubstituteFactory SubstituteFactory { get; } = substituteFactory;
 
   public object AutoCreate(Type type)
   {
