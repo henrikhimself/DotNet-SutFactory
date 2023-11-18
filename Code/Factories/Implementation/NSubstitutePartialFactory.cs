@@ -2,17 +2,10 @@
 
 namespace Hj.SutFactory.Factories.Implementation;
 
-public sealed class NSubstitutePartialFactory : FactoryBase, IPartialInstanceFactory
+public sealed class NSubstitutePartialFactory(IServiceProvider serviceProvider) : FactoryBase, IPartialInstanceFactory
 {
-  private readonly IServiceProvider _serviceProvider;
-  private readonly NSubstitute.Core.ISubstituteFactory _nSubstituteFactory;
-
-  public NSubstitutePartialFactory(IServiceProvider serviceProvider)
-  {
-    _serviceProvider = serviceProvider;
-
-    _nSubstituteFactory = SubstitutionContext.Current.SubstituteFactory;
-  }
+  private readonly IServiceProvider _serviceProvider = serviceProvider;
+  private readonly NSubstitute.Core.ISubstituteFactory _nSubstituteFactory = SubstitutionContext.Current.SubstituteFactory;
 
   public object Create(Type type)
   {

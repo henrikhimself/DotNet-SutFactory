@@ -1,17 +1,13 @@
 ﻿namespace Hj.SutFactory.Builders.Implementation;
 
-public sealed class InputBuilderAdvanced
+public sealed class InputBuilderAdvanced(
+  IServiceProvider serviceProvider,
+  IInstanceFactory instanceFactory,
+  IInputRegistry inputRegistry)
 {
-  private readonly IServiceProvider _serviceProvider;
-  private readonly IInstanceFactory _instanceFactory;
-  private readonly IInputRegistry _inputRegistry;
-
-  public InputBuilderAdvanced(IServiceProvider serviceProvider, IInstanceFactory instanceFactory, IInputRegistry inputRegistry)
-  {
-    _serviceProvider = serviceProvider;
-    _instanceFactory = instanceFactory;
-    _inputRegistry = inputRegistry;
-  }
+  private readonly IServiceProvider _serviceProvider = serviceProvider;
+  private readonly IInstanceFactory _instanceFactory = instanceFactory;
+  private readonly IInputRegistry _inputRegistry = inputRegistry;
 
   /// <summary>
   /// Creates an instance of type T as a concrete type.

@@ -1,20 +1,13 @@
 ﻿namespace Hj.SutFactory.ServiceLocation;
 
-public class SutBuilderServiceProvider : IServiceProvider
+public class SutBuilderServiceProvider(
+  IServiceProvider? externalServiceProvider,
+  Lazy<IInputRegistry> inputRegistry,
+  Lazy<IInstanceFactory> instanceFactory) : IServiceProvider
 {
-  private readonly IServiceProvider? _externalServiceProvider;
-  private readonly Lazy<IInputRegistry> _inputRegistry;
-  private readonly Lazy<IInstanceFactory> _instanceFactory;
-
-  public SutBuilderServiceProvider(
-    IServiceProvider? externalServiceProvider,
-    Lazy<IInputRegistry> inputRegistry,
-    Lazy<IInstanceFactory> instanceFactory)
-  {
-    _externalServiceProvider = externalServiceProvider;
-    _inputRegistry = inputRegistry;
-    _instanceFactory = instanceFactory;
-  }
+  private readonly IServiceProvider? _externalServiceProvider = externalServiceProvider;
+  private readonly Lazy<IInputRegistry> _inputRegistry = inputRegistry;
+  private readonly Lazy<IInstanceFactory> _instanceFactory = instanceFactory;
 
   public object? GetService(Type type)
   {

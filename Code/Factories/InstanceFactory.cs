@@ -1,22 +1,15 @@
 ﻿namespace Hj.SutFactory.Factories;
 
-public class InstanceFactory : IInstanceFactory
+public class InstanceFactory(
+  ICtorInstanceFactory ctorInstanceFactory,
+  IPartialInstanceFactory partialInstanceFactory,
+  ISubstituteFactory substituteFactory) : IInstanceFactory
 {
-  public InstanceFactory(
-      ICtorInstanceFactory ctorInstanceFactory,
-      IPartialInstanceFactory partialInstanceFactory,
-      ISubstituteFactory substituteFactory)
-  {
-    CtorInstanceFactory = ctorInstanceFactory;
-    PartialInstanceFactory = partialInstanceFactory;
-    SubstituteFactory = substituteFactory;
-  }
+  public ICtorInstanceFactory CtorInstanceFactory { get; private set; } = ctorInstanceFactory;
 
-  public ICtorInstanceFactory CtorInstanceFactory { get; private set; }
+  public IPartialInstanceFactory PartialInstanceFactory { get; private set; } = partialInstanceFactory;
 
-  public IPartialInstanceFactory PartialInstanceFactory { get; private set; }
-
-  public ISubstituteFactory SubstituteFactory { get; private set; }
+  public ISubstituteFactory SubstituteFactory { get; private set; } = substituteFactory;
 
   public object AutoCreate(Type type)
   {

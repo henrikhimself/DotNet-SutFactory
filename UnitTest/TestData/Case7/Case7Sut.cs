@@ -1,20 +1,13 @@
 ﻿namespace Hj.SutFactory.UnitTest.TestData.Case7;
 
-public class Case7Sut
+public class Case7Sut(
+  InstanceInput instance,
+  ClassPartialSubstituteInput classPartialSubstituteInput,
+  IInterfaceSubstituteInput interfaceSubstituteInput)
 {
-  public Case7Sut(
-    InstanceInput instance,
-    ClassPartialSubstituteInput classPartialSubstituteInput,
-    IInterfaceSubstituteInput interfaceSubstituteInput)
-  {
-    InstanceInput = instance;
-    ClassPartialSubstituteInput = classPartialSubstituteInput;
-    IInterfaceSubstituteInput = interfaceSubstituteInput;
-  }
+  public InstanceInput InstanceInput { get; } = instance;
 
-  public InstanceInput InstanceInput { get; }
+  public ClassPartialSubstituteInput ClassPartialSubstituteInput { get; } = classPartialSubstituteInput;
 
-  public ClassPartialSubstituteInput ClassPartialSubstituteInput { get; }
-
-  public IInterfaceSubstituteInput IInterfaceSubstituteInput { get; }
+  public IInterfaceSubstituteInput IInterfaceSubstituteInput { get; } = interfaceSubstituteInput;
 }

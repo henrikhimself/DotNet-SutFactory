@@ -3,15 +3,11 @@
 /// <summary>
 /// An input can depend on other inputs that all gets resolved and injected.
 /// </summary>
-public class ClassWithDependency
+public class ClassWithDependency(
+  ClassKnownInput classKnownInput,
+  ClassUnknownInput classUnknownInput)
 {
-  public ClassWithDependency(ClassKnownInput classKnownInput, ClassUnknownInput classUnknownInput)
-  {
-    ClassKnownInput = classKnownInput;
-    ClassUnknownInput = classUnknownInput;
-  }
+  public ClassKnownInput ClassKnownInput { get; } = classKnownInput;
 
-  public ClassKnownInput ClassKnownInput { get; }
-
-  public ClassUnknownInput ClassUnknownInput { get; }
+  public ClassUnknownInput ClassUnknownInput { get; } = classUnknownInput;
 }

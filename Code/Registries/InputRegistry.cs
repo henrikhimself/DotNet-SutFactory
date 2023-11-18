@@ -2,18 +2,12 @@
 
 namespace Hj.SutFactory.Registries;
 
-public class InputRegistry : IInputRegistry
+public class InputRegistry(
+  IRegistryKeyGenerator registryKeyGenerator,
+  InputCollection inputCollection) : IInputRegistry
 {
-  private readonly IRegistryKeyGenerator _registryKeyGenerator;
-  private readonly InputCollection _inputCollection;
-
-  public InputRegistry(
-      IRegistryKeyGenerator registryKeyGenerator,
-      InputCollection inputCollection)
-  {
-    _registryKeyGenerator = registryKeyGenerator;
-    _inputCollection = inputCollection;
-  }
+  private readonly IRegistryKeyGenerator _registryKeyGenerator = registryKeyGenerator;
+  private readonly InputCollection _inputCollection = inputCollection;
 
   public object? GetOrCreateValue(Type serviceType, Type implementationType, bool isSingleton, Func<object?> valueFactory)
   {

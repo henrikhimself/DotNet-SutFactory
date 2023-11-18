@@ -68,11 +68,9 @@ public class SutBuilder : ISutBuilderProvider
 
   public SutBuilder GetSutBuilder() => this;
 
-  public class SutBuilderAdvanced
+  public class SutBuilderAdvanced(SutBuilder sutBuilder)
   {
-    private readonly SutBuilder _sutBuilder;
-
-    public SutBuilderAdvanced(SutBuilder sutBuilder) => _sutBuilder = sutBuilder;
+    private readonly SutBuilder _sutBuilder = sutBuilder;
 
     public T Instance<T>() => (T)_sutBuilder._instanceFactory.Value.CtorInstanceFactory.Create(typeof(T));
 

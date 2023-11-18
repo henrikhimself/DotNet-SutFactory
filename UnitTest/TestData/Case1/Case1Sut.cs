@@ -1,16 +1,10 @@
 ﻿namespace Hj.SutFactory.UnitTest.TestData.Case1;
 
-public class Case1Sut
+public class Case1Sut(
+  IInterfaceInput interfaceInput,
+  ImplementationInput implementationInput)
 {
-  public Case1Sut(
-    IInterfaceInput interfaceInput,
-    ImplementationInput implementationInput)
-  {
-    InterfaceInputValue = interfaceInput;
-    ImplementationInputValue = implementationInput;
-  }
+  public IInterfaceInput InterfaceInputValue { get; } = interfaceInput;
 
-  public IInterfaceInput InterfaceInputValue { get; }
-
-  public ImplementationInput ImplementationInputValue { get; }
+  public ImplementationInput ImplementationInputValue { get; } = implementationInput;
 }

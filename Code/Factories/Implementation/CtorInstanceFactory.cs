@@ -1,10 +1,8 @@
 ﻿namespace Hj.SutFactory.Factories.Implementation;
 
-public sealed class CtorInstanceFactory : FactoryBase, ICtorInstanceFactory
+public sealed class CtorInstanceFactory(IServiceProvider serviceProvider) : FactoryBase, ICtorInstanceFactory
 {
-  private readonly IServiceProvider _serviceProvider;
-
-  public CtorInstanceFactory(IServiceProvider serviceProvider) => _serviceProvider = serviceProvider;
+  private readonly IServiceProvider _serviceProvider = serviceProvider;
 
   public object Create(Type type)
   {

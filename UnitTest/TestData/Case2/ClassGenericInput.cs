@@ -1,8 +1,6 @@
 ﻿namespace Hj.SutFactory.UnitTest.TestData.Case2;
 
-public class ClassGenericInput<T>
+public class ClassGenericInput<T>(T t)
 {
-  public ClassGenericInput(T t) => TValue = t;
-
-  public T TValue { get; }
+  public T TValue { get; } = t;
 }
