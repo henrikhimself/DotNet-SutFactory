@@ -56,22 +56,22 @@ private static void SetHappyPath(InputBuilder inputBuilder)
     {
         inputBuilder.Instance<IDynamicDataStore>().Configure(dynamicDataStore =>
         {
+            var entities = new List<DdsEntity>();
+            inputBuilder.Advanced.Instance(() => entities);
+
             dynamicDataStoreFactory.CreateStore(Arg.Any<string>(), Arg.Any<Type>()).Returns(dynamicDataStore);
 
-            var ddsEntities = new List<DdsDataProtectionEntity>();
-            inputBuilder.Advanced.Instance(() => ddsEntities);
-
-            dynamicDataStore.LoadAll<DdsDataProtectionEntity>().Returns(ddsEntities);
+            dynamicDataStore.LoadAll<DdsEntity>().Returns(entities);
 
             inputBuilder.Advanced.Instance(() => Identity.NewIdentity()).Configure(identity =>
             {
-                dynamicDataStore.Save(Arg.Any<DdsDataProtectionEntity>())
+                dynamicDataStore.Save(Arg.Any<DdsEntity>())
                     .Returns(identity)
                     .AndDoes(x =>
                     {
-                        var ddsEntity = x.ArgAt<DdsDataProtectionEntity>(0);
-                        ddsEntities.Add(ddsEntity);
-                        dynamicDataStore.Load<DdsDataProtectionEntity>(Arg.Is<Identity>(i => i == identity)).Returns(ddsEntity);
+                        var entity = x.ArgAt<DdsEntity>(0);
+                        entities.Add(entity);
+                        dynamicDataStore.Load<DdsEntity>(Arg.Is<Identity>(i => i == identity)).Returns(entity);
                     });
             });
         });

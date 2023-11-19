@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Project", "Project", "{74E8
 		stylecop.json = stylecop.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SutFactory.Example", "Example\SutFactory.Example.csproj", "{6D1F1D35-AF48-45F2-9AEF-A0DDCE2B0A56}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{1C5C8C3D-B97B-4A43-B0AE-9296A6BC072C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C5C8C3D-B97B-4A43-B0AE-9296A6BC072C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C5C8C3D-B97B-4A43-B0AE-9296A6BC072C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D1F1D35-AF48-45F2-9AEF-A0DDCE2B0A56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D1F1D35-AF48-45F2-9AEF-A0DDCE2B0A56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D1F1D35-AF48-45F2-9AEF-A0DDCE2B0A56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D1F1D35-AF48-45F2-9AEF-A0DDCE2B0A56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
