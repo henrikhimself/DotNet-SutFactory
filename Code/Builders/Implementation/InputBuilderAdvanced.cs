@@ -18,7 +18,7 @@ public sealed class InputBuilderAdvanced(
     where T : class => Instance<T, T>();
 
   /// <summary>
-  /// Creates an instance of type TImplementation as either a concrete type.
+  /// Creates an instance of type TImplementation.
   /// </summary>
   /// <typeparam name="TInterface">Type of interface to register in service provider.</typeparam>
   /// <typeparam name="TImplementation">Type of instance to create.</typeparam>
@@ -36,7 +36,7 @@ public sealed class InputBuilderAdvanced(
   /// <typeparam name="T">Type of instance to create.</typeparam>
   /// <param name="instanceFactory">A func that creates an instance of T.</param>
   /// <returns>An instance configurator.</returns>
-  public InputBuilderConfigurator<T> Instance<T>(Func<T?>? instanceFactory)
+  public InputBuilderConfigurator<T> Instance<T>(Func<T> instanceFactory)
     where T : class => Instance<T, T>(instanceFactory);
 
   /// <summary>
@@ -48,7 +48,7 @@ public sealed class InputBuilderAdvanced(
   /// <typeparam name="TImplementation">Type of instance to create.</typeparam>
   /// <param name="instanceFactory">A func that creates an instance of T.</param>
   /// <returns>An instance configurator.</returns>
-  public InputBuilderConfigurator<TImplementation> Instance<TInterface, TImplementation>(Func<TImplementation?>? instanceFactory)
+  public InputBuilderConfigurator<TImplementation> Instance<TInterface, TImplementation>(Func<TImplementation> instanceFactory)
     where TInterface : class
     where TImplementation : class, TInterface
   {
@@ -56,7 +56,7 @@ public sealed class InputBuilderAdvanced(
       typeof(TInterface),
       typeof(TImplementation),
       true,
-      instanceFactory ??= () => null);
+      instanceFactory)!;
     return new InputBuilderConfigurator<TImplementation>(_serviceProvider, value);
   }
 
@@ -83,7 +83,7 @@ public sealed class InputBuilderAdvanced(
       typeof(T),
       typeof(T),
       true,
-      () => valueFactory(_instanceFactory));
+      () => valueFactory(_instanceFactory))!;
     return new InputBuilderConfigurator<T>(_serviceProvider, value);
   }
 }

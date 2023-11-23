@@ -5,7 +5,7 @@ namespace Hj.SutFactory.Builders;
 public sealed class InputBuilder(
   IServiceProvider serviceProvider,
   IInstanceFactory instanceFactory,
-  IInputRegistry inputRegistry)
+  IInputRegistry inputRegistry) : IServiceProvider
 {
   private readonly IServiceProvider _serviceProvider = serviceProvider;
   private readonly IInstanceFactory _instanceFactory = instanceFactory;
@@ -15,6 +15,21 @@ public sealed class InputBuilder(
   /// Gets advanced methods that provide more control of how instances is created.
   /// </summary>
   public InputBuilderAdvanced Advanced { get; } = new InputBuilderAdvanced(serviceProvider, instanceFactory, inputRegistry);
+
+  public object? GetService(Type serviceType) => _inputRegistry.Get(serviceType);
+
+  /// <summary>
+  /// Explicitly registers NULL as type T.
+  /// </summary>
+  /// <typeparam name="T">An instance of type T.</typeparam>
+  public void Null<T>()
+  {
+    _ = _inputRegistry.GetOrCreateValue(
+      typeof(T),
+      typeof(T),
+      false,
+      () => null);
+  }
 
   /// <summary>
   /// Creates an instance of type T as either a concrete type, a partial substitute or as a substitute.
@@ -38,7 +53,7 @@ public sealed class InputBuilder(
       typeof(TInterface),
       typeof(TImplementation),
       true,
-      () => (TImplementation)_instanceFactory.AutoCreate(typeof(TImplementation)));
+      () => (TImplementation)_instanceFactory.AutoCreate(typeof(TImplementation)))!;
     return new InputBuilderConfigurator<TInterface>(_serviceProvider, value);
   }
 }

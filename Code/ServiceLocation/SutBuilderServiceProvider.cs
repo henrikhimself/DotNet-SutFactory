@@ -11,10 +11,19 @@ public class SutBuilderServiceProvider(
 
   public object? GetService(Type serviceType)
   {
-    var value = _externalServiceProvider?.GetService(serviceType) ?? _inputRegistry.Value.GetOrCreateValue(
+    var externalService = _externalServiceProvider?.GetService(serviceType);
+    if (externalService is not null)
+    {
+      return externalService;
+    }
+
+    // Service types without a configured input builder defaults to being Singletons. This is
+    // useful for getting instances that was automically created during the resolving of constructor
+    // parameters without having to configure these ahead of creating the SUT.
+    var value = _inputRegistry.Value.GetOrCreateValue(
         serviceType,
         serviceType,
-        false,
+        true,
         () => _instanceFactory.Value.AutoCreate(serviceType));
     return value;
   }

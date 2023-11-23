@@ -2,25 +2,25 @@
 
 public sealed class InputBuilderConfigurator<T>(
   IServiceProvider serviceProvider,
-  object? value)
+  object value)
     where T : class
 {
   private readonly IServiceProvider _serviceProvider = serviceProvider;
-  private readonly object? _value = value;
+  private readonly object _value = value;
 
   public void Configure(Action<T> action)
   {
-    if (_value is not null && action is not null)
+    if (action is not null)
     {
-      action((T)_value!);
+      action((T)_value);
     }
   }
 
   public void Configure(Action<T, IServiceProvider> action)
   {
-    if (_value is not null && action is not null)
+    if (action is not null)
     {
-      action((T)_value!, _serviceProvider);
+      action((T)_value, _serviceProvider);
     }
   }
 }

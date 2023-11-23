@@ -7,10 +7,10 @@ using Hj.SutFactory.ServiceLocation;
 
 namespace Hj.SutFactory;
 
-public class SutBuilder : ISutBuilderProvider
+public class SutBuilder : ISutBuilderProvider, IServiceProvider
 {
   private readonly InputCollection? _registryInputCollection = new();
-  private readonly IServiceProvider _serviceProvider;
+  private readonly IServiceProvider _sutBuilderServiceProvider;
   private readonly Lazy<IInputRegistry> _inputRegistry;
   private readonly Lazy<IInstanceFactory> _instanceFactory;
   private readonly Lazy<InputBuilder> _inputBuilder;
@@ -34,10 +34,12 @@ public class SutBuilder : ISutBuilderProvider
       return service;
     }
 
+    var getSutBuilderServiceProvider = () => _sutBuilderServiceProvider;
+
     _instanceFactory = new Lazy<IInstanceFactory>(() => GetService<IInstanceFactory>(() =>
     {
-      var ctorInstanceFactory = GetService<ICtorInstanceFactory>(() => new CtorInstanceFactory(ServiceProvider));
-      var partialInstanceFactory = GetService<IPartialInstanceFactory>(() => new NSubstitutePartialFactory(ServiceProvider));
+      var ctorInstanceFactory = GetService<ICtorInstanceFactory>(() => new CtorInstanceFactory(getSutBuilderServiceProvider()));
+      var partialInstanceFactory = GetService<IPartialInstanceFactory>(() => new NSubstitutePartialFactory(getSutBuilderServiceProvider()));
       var substituteFactory = GetService<ISubstituteFactory>(() => new NSubstituteSubstituteFactory());
       return new InstanceFactory(ctorInstanceFactory, partialInstanceFactory, substituteFactory);
     }));
@@ -48,17 +50,17 @@ public class SutBuilder : ISutBuilderProvider
       return new InputRegistry(registryKeyGenerator, _registryInputCollection);
     }));
 
-    _serviceProvider = new SutBuilderServiceProvider(externalServiceProvider, _inputRegistry, _instanceFactory);
+    _sutBuilderServiceProvider = new SutBuilderServiceProvider(externalServiceProvider, _inputRegistry, _instanceFactory);
 
-    _inputBuilder = new Lazy<InputBuilder>(() => new InputBuilder(_serviceProvider, _instanceFactory.Value, _inputRegistry.Value));
+    _inputBuilder = new Lazy<InputBuilder>(() => new InputBuilder(_sutBuilderServiceProvider, _instanceFactory.Value, _inputRegistry.Value));
     _sutBuilderAdvanced = new Lazy<SutBuilderAdvanced>(() => new SutBuilderAdvanced(this));
   }
 
   public InputBuilder InputBuilder => _inputBuilder.Value;
 
-  public IServiceProvider ServiceProvider => _serviceProvider;
-
   public SutBuilderAdvanced Advanced => _sutBuilderAdvanced.Value;
+
+  public object? GetService(Type serviceType) => _inputRegistry.Value.Get(serviceType);
 
   public T CreateSut<T>()
       where T : class => (T)_instanceFactory.Value.AutoCreate(typeof(T));

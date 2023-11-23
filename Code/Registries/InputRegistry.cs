@@ -11,21 +11,24 @@ public class InputRegistry(
 
   public object? GetOrCreateValue(Type serviceType, Type implementationType, bool isSingleton, Func<object?> valueFactory)
   {
-    object? value = null;
-
-    var serviceTypeKey = _registryKeyGenerator.GenerateKey(serviceType);
-    if (serviceTypeKey is not null)
+    if (!TryGet(serviceType, out var value))
     {
-      if (!TryGet(serviceTypeKey, serviceType, out value))
-      {
-        value = Create(serviceTypeKey, implementationType, isSingleton, valueFactory);
-      }
+      _ = TrySet(serviceType, implementationType, isSingleton, valueFactory, out value);
     }
 
     return value;
   }
 
-  private bool TryGet(string typeKey, Type serviceType, out object? value)
+  public object? Get(Type serviceType)
+  {
+    _ = TryGet(serviceType, out var value);
+    return value;
+  }
+
+  public void Set(Type serviceType, Type implementationType, bool isSingleton, Func<object?> valueFactory)
+    => _ = TrySet(serviceType, implementationType, isSingleton, valueFactory, out var _);
+
+  private bool TryGet(Type serviceType, out object? value)
   {
     value = default;
 
@@ -44,29 +47,41 @@ public class InputRegistry(
       }
     }
 
-    if (_inputCollection.TryGet(typeKey, out value))
+    var serviceTypeKey = _registryKeyGenerator.GenerateKey(serviceType);
+    if (serviceTypeKey is not null)
     {
-      return true;
+      if (_inputCollection.TryGet(serviceTypeKey, out value))
+      {
+        return true;
+      }
     }
 
     return false;
   }
 
-  private object? Create(string typeKey, Type implementationType, bool isSingleton, Func<object?> valueFactory)
+  private bool TrySet(Type serviceType, Type implementationType, bool isSingleton, Func<object?> valueFactory, out object? value)
   {
-    var value = valueFactory();
+    var serviceTypeKey = _registryKeyGenerator.GenerateKey(serviceType);
+    if (serviceTypeKey is null)
+    {
+      value = null;
+      return false;
+    }
+
+    var newValue = value = valueFactory();
 
     var interfaceKeys = implementationType.GetInterfaces()
         .Select(_registryKeyGenerator.GenerateKey);
+
     if (isSingleton)
     {
-      _inputCollection.AddFactory(typeKey, interfaceKeys, () => value);
+      _inputCollection.AddFactory(serviceTypeKey, interfaceKeys, () => newValue);
     }
     else
     {
-      _inputCollection.AddFactory(typeKey, interfaceKeys, valueFactory);
+      _inputCollection.AddFactory(serviceTypeKey, interfaceKeys, valueFactory);
     }
 
-    return value;
+    return true;
   }
 }
