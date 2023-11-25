@@ -1,4 +1,6 @@
-﻿namespace Hj.SutFactory.UnitTest.Case3;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace Hj.SutFactory.UnitTest.Case3;
 
 // Case 3 focus on returning multiple implementations, of an interface, as an IEnumerable and
 // overriding this inferred behavior.
@@ -46,5 +48,19 @@ public class Case3Tests
 
     // assert
     Assert.Empty(result.InterfaceInputValues);
+  }
+
+  [Fact]
+  public void Instance_GivenMultipleImplementations_Throws()
+  {
+    // arrange
+    var sutBuilder = new SutBuilder();
+    var inputBuilder = sutBuilder.InputBuilder;
+
+    var implementationInput1 = inputBuilder.Instance<ImplementationInput1>();
+    var implementationInput2 = inputBuilder.Instance<ImplementationInput2>();
+
+    // act & assert
+    Assert.Throws<InvalidOperationException>(inputBuilder.Instance<IInterfaceInput>);
   }
 }
