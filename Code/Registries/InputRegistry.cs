@@ -32,6 +32,15 @@ public class InputRegistry(
   {
     value = default;
 
+    var serviceTypeKey = _registryKeyGenerator.GenerateKey(serviceType);
+    if (serviceTypeKey is not null)
+    {
+      if (_inputCollection.TryGet(serviceTypeKey, out value))
+      {
+        return true;
+      }
+    }
+
     if (serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
     {
       var genericType = serviceType.GetGenericArguments()[0];
@@ -42,15 +51,6 @@ public class InputRegistry(
       }
 
       if (_inputCollection.TryGetList(genericTypeKey, genericType, out value))
-      {
-        return true;
-      }
-    }
-
-    var serviceTypeKey = _registryKeyGenerator.GenerateKey(serviceType);
-    if (serviceTypeKey is not null)
-    {
-      if (_inputCollection.TryGet(serviceTypeKey, out value))
       {
         return true;
       }

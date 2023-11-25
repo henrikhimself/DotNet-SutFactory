@@ -20,8 +20,7 @@ public class DataStoreTests
 
     // Retrieve the data entities list for later when we assert that the Create operation was successful.
     var dataEntities = sutBuilder
-      .ServiceProvider
-      .GetService<List<DataEntity>>()!;
+      .GetRequiredService<List<DataEntity>>();
 
     // act
     var result = sut.Create("my decimal store", 30m);
@@ -42,8 +41,7 @@ public class DataStoreTests
 
     // Break the happy path by configuring the Save method to return an empty identity.
     sutBuilder
-      .ServiceProvider
-      .GetService<IDataStore>()!
+      .GetRequiredService<IDataStore>()
       .Save(Arg.Any<DataEntity>())
       .Returns(Guid.Empty);
 
@@ -82,8 +80,7 @@ public class DataStoreTests
     // Break the happy path by retrieving the data entities list and change
     // the data such that we provoke a format exception to be thrown.
     sutBuilder
-      .ServiceProvider
-      .GetService<List<DataEntity>>()!
+      .GetRequiredService<List<DataEntity>>()
       .ForEach(entity => entity.Value = "not an integer");
 
     // act & assert
@@ -106,8 +103,7 @@ public class DataStoreTests
 
     // Retrieve the data entities list for later when we assert that the Update operation was successful.
     var dataEntities = sutBuilder
-      .ServiceProvider
-      .GetService<List<DataEntity>>()!;
+      .GetRequiredService<List<DataEntity>>();
 
     // act
     // It is safe to also change the Type here without affecting the other unit tests. Even though the "known entity"
@@ -131,8 +127,7 @@ public class DataStoreTests
 
     // Break the happy path by configuring the Save method to return an empty identity.
     sutBuilder
-      .ServiceProvider
-      .GetService<IDataStore>()!
+      .GetRequiredService<IDataStore>()
       .Save(Arg.Any<DataEntity>())
       .Returns(Guid.Empty);
 
@@ -151,8 +146,7 @@ public class DataStoreTests
 
     // Retrieve the data entities list for later when we assert that the Delete operation was successful.
     var dataEntities = sutBuilder
-      .ServiceProvider
-      .GetService<List<DataEntity>>()!;
+      .GetRequiredService<List<DataEntity>>();
 
     // act
     sut.Delete("my integer store", _knownEntityId);
@@ -163,73 +157,52 @@ public class DataStoreTests
 
   private static void SetHappyPath(InputBuilder inputBuilder)
   {
-    var knownEntity = new DataEntity { Id = _knownEntityId, Value = 10, };
+    // A data entities list is configured which is used later.
+    var dataEntities = inputBuilder.Instance<List<DataEntity>>();
+    dataEntities.Add(new() { Id = _knownEntityId, Value = 10, });
+    dataEntities.Add(new() { Id = Guid.NewGuid(), Value = 20, });
 
-    // Create a list for storing entities that can be used in the calling unit test. The instance is added to
-    // the input builder such that it can be retrieved via the sut builder.
-    var dataEntities = new List<DataEntity>
+    // A data store fake is configured to use the data entities list.
+    var dataStore = inputBuilder.Instance<IDataStore>();
+    dataStore.LoadAll().Returns(x => dataEntities.Select(x => x.Clone()));
+    dataStore.Load(Arg.Any<Guid>()).Returns(x =>
     {
-      knownEntity,
-      new() { Id = Guid.NewGuid(), Value = 20, },
-    };
-    inputBuilder.Advanced.Instance(() => dataEntities);
+      var id = x.ArgAt<Guid>(0);
+      return dataEntities.SingleOrDefault(item => item.Id == id)?.Clone();
+    });
+    dataStore.When(x => x.Delete(Arg.Any<Guid>())).Do(x =>
+    {
+      var id = x.ArgAt<Guid>(0);
+      dataEntities.RemoveAll(item => item.Id == id);
+    });
+    dataStore.Save(Arg.Any<DataEntity>()).Returns(x =>
+    {
+      // Set Save method to insert or update an entity.
+      var dataEntity = x.ArgAt<DataEntity>(0);
 
-    // Configure the data store factory service.
-    inputBuilder
-      .Instance<IDataStoreFactory>()
-      .Configure(dataStoreFactory =>
+      // Handle "insert".
+      if (dataEntity.Id == Guid.Empty)
       {
-        // Configure the data store service.
-        inputBuilder
-          .Instance<IDataStore>()
-          .Configure(dataStore =>
-          {
-            // Set data store factory method to return the data store.
-            dataStoreFactory.GetOrCreateStore(Arg.Any<string>(), Arg.Any<Type>()).Returns(dataStore);
+        // Create new entity and assign identity
+        var newDataEntity = dataEntity.Clone();
+        newDataEntity.Id = Guid.NewGuid();
+        dataEntities.Add(newDataEntity);
+        return newDataEntity.Id;
+      }
 
-            // Set LoadAll method to return all entities.
-            dataStore.LoadAll().Returns(x => dataEntities.Select(x => x.Clone()));
+      // Handle "update".
+      var oldDataEntity = dataEntities.SingleOrDefault(item => item.Id == dataEntity.Id);
+      if (oldDataEntity is not null)
+      {
+        oldDataEntity.Value = dataEntity.Value;
+        return oldDataEntity.Id;
+      }
 
-            // Set Load method to return look up entity by id.
-            dataStore.Load(Arg.Any<Guid>()).Returns(x =>
-            {
-              var id = x.ArgAt<Guid>(0);
-              return dataEntities.SingleOrDefault(item => item.Id == id)?.Clone();
-            });
+      return Guid.Empty;
+    });
 
-            // Set Delete method to remove entity by id;
-            dataStore.When(x => x.Delete(Arg.Any<Guid>())).Do(x =>
-            {
-              var id = x.ArgAt<Guid>(0);
-              dataEntities.RemoveAll(item => item.Id == id);
-            });
-
-            // Set Save method to insert or update an entity.
-            dataStore.Save(Arg.Any<DataEntity>()).Returns(x =>
-            {
-              var dataEntity = x.ArgAt<DataEntity>(0);
-
-              // Handle "insert".
-              if (dataEntity.Id == Guid.Empty)
-              {
-                // Create new entity and assign identity
-                var newDataEntity = dataEntity.Clone();
-                newDataEntity.Id = Guid.NewGuid();
-                dataEntities.Add(newDataEntity);
-                return newDataEntity.Id;
-              }
-
-              // Handle "update".
-              var oldDataEntity = dataEntities.SingleOrDefault(item => item.Id == dataEntity.Id);
-              if (oldDataEntity is not null)
-              {
-                oldDataEntity.Value = dataEntity.Value;
-                return oldDataEntity.Id;
-              }
-
-              return Guid.Empty;
-            });
-          });
-      });
+    // A data store factory service is configured to return the data store fake.
+    var dataStoreFactory = inputBuilder.Instance<IDataStoreFactory>();
+    dataStoreFactory.GetOrCreateStore(Arg.Any<string>(), Arg.Any<Type>()).Returns(dataStore);
   }
 }

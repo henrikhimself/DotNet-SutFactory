@@ -26,15 +26,62 @@ public abstract class FactoryBase
     var parameterTypes = ctor.GetParameters()
         .Select(x => x.ParameterType)
         .ToArray();
-    var parameters = new object?[parameterTypes.Length];
+    var parametersCount = parameterTypes.Length;
+    var parameters = new object?[parametersCount];
 
-    for (var i = 0; i < parameterTypes.Length; i++)
+    if (parametersCount == 1)
     {
-      var parameterType = parameterTypes[i];
-      var instance = serviceProvider.GetService(parameterType);
-      parameters[i] = instance;
+      ResolveOneParameter(parameterTypes, parameters, serviceProvider);
+    }
+    else
+    {
+      ResolveManyParameters(parameterTypes, parameters, serviceProvider);
     }
 
     return parameters;
+  }
+
+  private static void ResolveOneParameter(Type[] parameterTypes, object?[] parameters, IServiceProvider serviceProvider)
+    => parameters[0] = serviceProvider.GetService(parameterTypes[0]);
+
+  private static void ResolveManyParameters(Type[] parameterTypes, object?[] parameters, IServiceProvider serviceProvider)
+  {
+    void SetInstance(int parameterIndex, Type serviceType)
+    {
+      var instance = serviceProvider.GetService(serviceType);
+      parameters[parameterIndex] = instance;
+    }
+
+    // Defer contract types as registering implementations first may add implicit registrations
+    // that can be reused later.
+    for (var i = 0; i < parameterTypes.Length; i++)
+    {
+      var parameterType = parameterTypes[i];
+      var isContract = InstanceHelper.IsContract(parameterType);
+      if (isContract)
+      {
+        parameters[i] = new Deferred(i, parameterType);
+      }
+      else
+      {
+        SetInstance(i, parameterType);
+      }
+    }
+
+    // Set deferred registrations.
+    for (var i = 0; i < parameterTypes.Length; i++)
+    {
+      if (parameters[i] is Deferred deferred)
+      {
+        SetInstance(deferred.ParameterIndex, deferred.ParameterType);
+      }
+    }
+  }
+
+  internal readonly struct Deferred(int parameterIndex, Type parameterType)
+  {
+    internal int ParameterIndex { get; } = parameterIndex;
+
+    internal Type ParameterType { get; } = parameterType;
   }
 }

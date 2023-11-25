@@ -34,12 +34,12 @@ public class SutBuilder : ISutBuilderProvider, IServiceProvider
       return service;
     }
 
-    var getSutBuilderServiceProvider = () => _sutBuilderServiceProvider;
+    IServiceProvider GetSutBuilderServiceProvider() => _sutBuilderServiceProvider!;
 
     _instanceFactory = new Lazy<IInstanceFactory>(() => GetService<IInstanceFactory>(() =>
     {
-      var ctorInstanceFactory = GetService<ICtorInstanceFactory>(() => new CtorInstanceFactory(getSutBuilderServiceProvider()));
-      var partialInstanceFactory = GetService<IPartialInstanceFactory>(() => new NSubstitutePartialFactory(getSutBuilderServiceProvider()));
+      var ctorInstanceFactory = GetService<ICtorInstanceFactory>(() => new CtorInstanceFactory(GetSutBuilderServiceProvider()));
+      var partialInstanceFactory = GetService<IPartialInstanceFactory>(() => new NSubstitutePartialFactory(GetSutBuilderServiceProvider()));
       var substituteFactory = GetService<ISubstituteFactory>(() => new NSubstituteSubstituteFactory());
       return new InstanceFactory(ctorInstanceFactory, partialInstanceFactory, substituteFactory);
     }));
@@ -52,7 +52,7 @@ public class SutBuilder : ISutBuilderProvider, IServiceProvider
 
     _sutBuilderServiceProvider = new SutBuilderServiceProvider(externalServiceProvider, _inputRegistry, _instanceFactory);
 
-    _inputBuilder = new Lazy<InputBuilder>(() => new InputBuilder(_sutBuilderServiceProvider, _instanceFactory.Value, _inputRegistry.Value));
+    _inputBuilder = new Lazy<InputBuilder>(() => new InputBuilder(_instanceFactory.Value, _inputRegistry.Value));
     _sutBuilderAdvanced = new Lazy<SutBuilderAdvanced>(() => new SutBuilderAdvanced(this));
   }
 

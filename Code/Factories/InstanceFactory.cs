@@ -15,17 +15,20 @@ public class InstanceFactory(
   {
     object instance;
 
-    if (type.IsInterface || type.IsAbstract)
+    if (InstanceHelper.IsImplementation(type))
     {
-      instance = SubstituteFactory.Create(type);
-    }
-    else if (type.IsSealed)
-    {
-      instance = CtorInstanceFactory.Create(type);
+      if (type.IsSealed)
+      {
+        instance = CtorInstanceFactory.Create(type);
+      }
+      else
+      {
+        instance = PartialInstanceFactory.Create(type);
+      }
     }
     else
     {
-      instance = PartialInstanceFactory.Create(type);
+      instance = SubstituteFactory.Create(type);
     }
 
     return instance;

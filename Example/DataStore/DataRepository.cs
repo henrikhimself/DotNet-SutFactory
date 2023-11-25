@@ -2,7 +2,7 @@
 
 namespace Hj.SutFactory.Example.DataStore;
 
-public class DataRepository(IDataStoreFactory dataStoreFactory)
+public class DataRepository(IDataStoreFactory dataStoreFactory) : IDataRepository
 {
   private readonly IDataStoreFactory _dataStoreFactory = dataStoreFactory;
 
