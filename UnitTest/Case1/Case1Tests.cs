@@ -6,11 +6,8 @@ public class Case1Tests
   [Fact]
   public void CreateSut_GivenUnknownRegistrations_CreatesSut()
   {
-    // arrange
-    var sutBuilder = new SutBuilder();
-
     // act
-    var result = sutBuilder.CreateSut<Case1Sut>();
+    var result = SystemUnderTest.For<Case1Sut>();
 
     // assert
     Assert.NotNull(result.InterfaceInput);

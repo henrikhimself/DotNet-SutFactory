@@ -1,5 +1,10 @@
 # A SUT Factory.
 
+Like AutoFixture, this library aims to minimize the arrange phase of your unit test.
+
+
+
+
 This is a System-Under-Test (SUT) factory designed to minimize the use of hard-coded constructors in unit tests. In a sizable codebase containing thousands of unit tests, minimizing code used to construct SUT instances allows easier refactoring.
 
 It combines a service provider with a mocking library. The SUT factory enables selective mocking of only the service instances necessary for a given unit test while automatically generating substitutes for any remaining services that is required to construct the SUT.

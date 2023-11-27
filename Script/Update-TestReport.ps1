@@ -16,7 +16,7 @@ if (-Not (Test-Path -Path $TestPath)) {
 [string]$TestDirectoryPath = Split-Path -Path $TestPath -Parent
 
 # Check path of test coverage settings.
-[string]$CoverletRunSettingsPath = Join-Path $TestDirectoryPath 'coverlet.runsettings'
+[string]$CoverletRunSettingsPath = Join-Path $TestDirectoryPath '.runsettings'
 if (-Not (Test-Path -Path $CoverletRunSettingsPath -PathType leaf)) {
   throw 'Cannot find coverlet run settings file.'
 }

@@ -6,14 +6,11 @@ public class Case5Tests
   [Fact]
   public void CreateSut_GivenCase6Sut_CreatesSut()
   {
-    // arrange
-    var sutBuilder = new SutBuilder();
-    var inputBuilder = sutBuilder.InputBuilder;
-
-    inputBuilder.Null<NullInput>();
-
-    // act
-    var result = sutBuilder.CreateSut<Case5Sut>();
+    // arrange & act
+    var result = SystemUnderTest.For<Case5Sut>(arrange =>
+    {
+      arrange.Null<NullInput>();
+    });
 
     // assert
     Assert.Null(result.NullInput);

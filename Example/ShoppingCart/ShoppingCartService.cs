@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Hj.SutFactory.Example;
+namespace Hj.SutFactory.Example.ShoppingCart;
 
 public class ShoppingCartService(
   IPriceCalculator priceCalculator,

@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RootNamespace>Hj.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
   </PropertyGroup>

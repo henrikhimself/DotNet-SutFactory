@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace Hj.SutFactory.UnitTest.Case6;
+﻿namespace Hj.SutFactory.UnitTest.Case6;
 
 // Case 6 focus on resolving implementations from an external service provider.
 public class Case6Tests

@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace Hj.SutFactory.UnitTest.Case2;
+﻿namespace Hj.SutFactory.UnitTest.Case2;
 
 // Case 2 focus on creating instances using the Advanced methods and implicit registrations.
 public class Case2Tests

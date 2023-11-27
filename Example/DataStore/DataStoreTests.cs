@@ -1,9 +1,4 @@
-﻿using Hj.SutFactory.Builders;
-using Hj.SutFactory.Example.DataStore;
-using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
-
-namespace Hj.SutFactory.Example;
+﻿namespace Hj.SutFactory.Example.DataStore;
 
 public class DataStoreTests
 {
@@ -13,20 +8,23 @@ public class DataStoreTests
   public void Create_GivenValue_SavesValue()
   {
     // arrange
-    var sutBuilder = new SutBuilder();
-    SetHappyPath(sutBuilder.InputBuilder);
+    // Declare a test spy for later verification by the test.
+    List<DataEntity>? dataEntitiesSpy = null;
 
-    var sut = sutBuilder.CreateSut<DataRepository>();
+    var sut = SystemUnderTest.For<DataRepository>(arrange =>
+    {
+      SetHappyPath(arrange);
 
-    // Retrieve the data entities list for later when we assert that the Create operation was successful.
-    var dataEntities = sutBuilder
-      .GetRequiredService<List<DataEntity>>();
+      // Retrieve the data entities list set by the happy path.
+      dataEntitiesSpy = arrange.GetService<List<DataEntity>>();
+    });
 
     // act
     var result = sut.Create("my decimal store", 30m);
 
     // assert
-    var entity = dataEntities.Single(item => item.Id == result);
+    Assert.NotNull(dataEntitiesSpy);
+    var entity = dataEntitiesSpy.Single(item => item.Id == result);
     Assert.Equal(30m, entity.Value);
   }
 
@@ -34,16 +32,13 @@ public class DataStoreTests
   public void Create_GivenSaveReturnEmptyIdentity_Throws()
   {
     // arrange
-    var sutBuilder = new SutBuilder();
-    SetHappyPath(sutBuilder.InputBuilder);
+    var sut = SystemUnderTest.For<DataRepository>(arrange =>
+    {
+      SetHappyPath(arrange);
 
-    var sut = sutBuilder.CreateSut<DataRepository>();
-
-    // Break the happy path by configuring the Save method to return an empty identity.
-    sutBuilder
-      .GetRequiredService<IDataStore>()
-      .Save(Arg.Any<DataEntity>())
-      .Returns(Guid.Empty);
+      // Break the happy path by configuring the Save method to return an empty identity.
+      arrange.Instance<IDataStore>().Save(Arg.Any<DataEntity>()).Returns(Guid.Empty);
+    });
 
     // act & assert
     Assert.Throws<InvalidOperationException>(() => sut.Create("my decimal store", 30m));
@@ -53,10 +48,7 @@ public class DataStoreTests
   public void Read_GivenValidDataFormat_ReturnsAll()
   {
     // arrange
-    var sutBuilder = new SutBuilder();
-    SetHappyPath(sutBuilder.InputBuilder);
-
-    var sut = sutBuilder.CreateSut<DataRepository>();
+    var sut = SystemUnderTest.For<DataRepository>(SetHappyPath);
 
     // act
     var result = sut.Read<int>("my integer store");
@@ -72,38 +64,33 @@ public class DataStoreTests
   public void Read_GivenInvalidDataFormat_Throws()
   {
     // arrange
-    var sutBuilder = new SutBuilder();
-    SetHappyPath(sutBuilder.InputBuilder);
+    var sut = SystemUnderTest.For<DataRepository>(arrange =>
+    {
+      SetHappyPath(arrange);
 
-    var sut = sutBuilder.CreateSut<DataRepository>();
-
-    // Break the happy path by retrieving the data entities list and change
-    // the data such that we provoke a format exception to be thrown.
-    sutBuilder
-      .GetRequiredService<List<DataEntity>>()
-      .ForEach(entity => entity.Value = "not an integer");
+      // Break the happy path by retrieving the data entities list and change
+      // the data such that we provoke a format exception to be thrown.
+      arrange.Instance<List<DataEntity>>().ForEach(entity => entity.Value = "not an integer");
+    });
 
     // act & assert
-    Assert.Throws<FormatException>(() =>
-    {
-      sut
-        .Read<int>("my integer store")
-        .ToList();
-    });
+    Assert.Throws<FormatException>(() => sut.Read<int>("my integer store").ToList());
   }
 
   [Fact]
   public void Update_GivenKnownId_UpdatesValue()
   {
     // arrange
-    var sutBuilder = new SutBuilder();
-    SetHappyPath(sutBuilder.InputBuilder);
+    // Declare a test spy for later verification by the test.
+    List<DataEntity>? dataEntitiesSpy = null;
 
-    var sut = sutBuilder.CreateSut<DataRepository>();
+    var sut = SystemUnderTest.For<DataRepository>(arrange =>
+    {
+      SetHappyPath(arrange);
 
-    // Retrieve the data entities list for later when we assert that the Update operation was successful.
-    var dataEntities = sutBuilder
-      .GetRequiredService<List<DataEntity>>();
+      // Retrieve the data entities list set by the happy path.
+      dataEntitiesSpy = arrange.GetService<List<DataEntity>>();
+    });
 
     // act
     // It is safe to also change the Type here without affecting the other unit tests. Even though the "known entity"
@@ -112,7 +99,8 @@ public class DataStoreTests
     sut.Update("my integer store", _knownEntityId, "100");
 
     // assert
-    var entity = dataEntities.Single(item => item.Id == _knownEntityId);
+    Assert.NotNull(dataEntitiesSpy);
+    var entity = dataEntitiesSpy.Single(item => item.Id == _knownEntityId);
     Assert.Equal("100", entity.Value);
   }
 
@@ -120,16 +108,13 @@ public class DataStoreTests
   public void Update_GivenSaveReturnEmptyIdentity_Throws()
   {
     // arrange
-    var sutBuilder = new SutBuilder();
-    SetHappyPath(sutBuilder.InputBuilder);
+    var sut = SystemUnderTest.For<DataRepository>(arrange =>
+    {
+      SetHappyPath(arrange);
 
-    var sut = sutBuilder.CreateSut<DataRepository>();
-
-    // Break the happy path by configuring the Save method to return an empty identity.
-    sutBuilder
-      .GetRequiredService<IDataStore>()
-      .Save(Arg.Any<DataEntity>())
-      .Returns(Guid.Empty);
+      // Break the happy path by configuring the Save method to return an empty identity.
+      arrange.Instance<IDataStore>().Save(Arg.Any<DataEntity>()).Returns(Guid.Empty);
+    });
 
     // act & assert
     Assert.Throws<InvalidOperationException>(() => sut.Update("my integer store", _knownEntityId, 100));
@@ -139,20 +124,23 @@ public class DataStoreTests
   public void Delete_GivenId_RemovesEntity()
   {
     // arrange
-    var sutBuilder = new SutBuilder();
-    SetHappyPath(sutBuilder.InputBuilder);
+    // Declare a test spy for later verification by the test.
+    List<DataEntity>? dataEntitiesSpy = null;
 
-    var sut = sutBuilder.CreateSut<DataRepository>();
+    var sut = SystemUnderTest.For<DataRepository>(arrange =>
+    {
+      SetHappyPath(arrange);
 
-    // Retrieve the data entities list for later when we assert that the Delete operation was successful.
-    var dataEntities = sutBuilder
-      .GetRequiredService<List<DataEntity>>();
+      // Retrieve the data entities list set by the happy path.
+      dataEntitiesSpy = arrange.GetService<List<DataEntity>>();
+    });
 
     // act
     sut.Delete("my integer store", _knownEntityId);
 
     // assert
-    Assert.DoesNotContain(dataEntities, item => item.Id == _knownEntityId);
+    Assert.NotNull(dataEntitiesSpy);
+    Assert.DoesNotContain(dataEntitiesSpy, item => item.Id == _knownEntityId);
   }
 
   private static void SetHappyPath(InputBuilder inputBuilder)

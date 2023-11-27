@@ -1,4 +1,4 @@
-﻿namespace Hj.SutFactory.Example;
+﻿namespace Hj.SutFactory.Example.ShoppingCart;
 
 public class PriceCalculator(
   ITaxCalculator taxCalculator) : IPriceCalculator
