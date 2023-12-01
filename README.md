@@ -1,88 +1,121 @@
 # A SUT Factory.
+This is a System Under Test (SUT) factory designed to eliminate the necessity for hard-coded parameter types during the creation of a SUT instance. It achieves this by integrating a service provider with the NSubstitute mocking library.
 
-Like AutoFixture, this library aims to minimize the arrange phase of your unit test.
+In its most basic form, the factory provides a single static method "SystemUnderTest.For" for arranging only the mocks that are relevant to you before the SUT is created. The "SutBuilder" provides more advanced methods and can be used for lambda-less coding or less usual arrangements e.g. testing implementations with multiple constructors.
 
-
-
-
-This is a System-Under-Test (SUT) factory designed to minimize the use of hard-coded constructors in unit tests. In a sizable codebase containing thousands of unit tests, minimizing code used to construct SUT instances allows easier refactoring.
-
-It combines a service provider with a mocking library. The SUT factory enables selective mocking of only the service instances necessary for a given unit test while automatically generating substitutes for any remaining services that is required to construct the SUT.
-
-Construction of instances prefer concrete instances whenever possible to enable the greatest testing depth possible. The SUT factory employs 4 strategies when resolving a dependency graph:
-* Using an instance provided by an external service provider.
-* Using the default constructor.
-* A partial instance provided by the mocking library.
-* A substitute mock provided by the mocking library.
-
-This SUT factory currently supports NSubstitute. It is possible to plug in an alternate mocking library.
-
-The automatic selection of a strategy should be enough for most unit tests. However, the SUT factory do allow manually choosing a specific strategy via the "Advanced" builder.
-
-A fluent API guides the order of configuration and allows access to the service provider for custom instance builders when needed. This opinionated approach can either be adopted or, alternately, the SUT factory can be used as just a "smart" service provider.
-
-All state is contained within the SUT factory instance and is therefore local to the scope of each unit test. This enables parallel unit test execution at the cost of some performance. However, it may still be faster with large test suites.
-
-In this example, the HostResolver is a custom service that depends on an instance of IHttpContextAccessor. In the unit test, an IHttpContextAccessor service is arranged to return a configured instance of DefaultHttpContext, designated as the service type HttpContext. The HostResolver implementation may require many other service instances to be injected, but for this unit test they are not needed, so we just let the SUT factory inject substitutes when creating the SUT.
-```
-// arrange
-var sutBuilder = new SutBuilder();
-sutBuilder.InputBuilder
-    .Instance<IHttpContextAccessor>()
-    .Configure(httpContextAccessor =>
-    {
-        inputBuilder
-            .Instance<HttpContext, DefaultHttpContext>()
-            .Configure(httpContext =>
-            {
-                httpContextAccessor.HttpContext = httpContext;
-
-                var uri = new Uri("https://example.com:8080/");
-                httpContext.Request.Scheme = uri.Scheme;
-                httpContext.Request.Host = new HostString(uri.Host);
-            });
-    });
-
-var sut = sutBuilder.CreateSut<HostResolver>();
-
-// act
-var result = sut.ComposeHostString(UriParts.Scheme, UriParts.Host, UriParts.Port);
-
-// assert
-Assert.Equal("https://example.com:8080", result);
-```
-
-This second example shows a more advanced use of the SUT factory to arrange the happy path of a document database service. The save and load methods is configured to mimic the external service by storing entities in a list and returning these entities when the load method is invoked. The executing unit test owns the inputBuilder instance which ensures that the entity list is local to only that unit test.
-
-```
-private static void SetHappyPath(InputBuilder inputBuilder)
+An example of using the SystemUnderTest.For\<T\> method:
+```cs
+[Fact]
+public void Read_GivenCompatibleDataStore_ReturnsAll()
 {
-    inputBuilder.Instance<IDynamicDataStoreFactory>().Configure(dynamicDataStoreFactory =>
-    {
-        inputBuilder.Instance<IDynamicDataStore>().Configure(dynamicDataStore =>
-        {
-            var entities = new List<DdsEntity>();
-            inputBuilder.Advanced.Instance(() => entities);
+  // arrange
+  var sut = SystemUnderTest.For<DataRepository>(SetHappyPath);
 
-            dynamicDataStoreFactory.CreateStore(Arg.Any<string>(), Arg.Any<Type>()).Returns(dynamicDataStore);
+  // act
+  var result = sut.Read<int>("my integer store");
 
-            dynamicDataStore.LoadAll<DdsEntity>().Returns(entities);
+  // assert
+  Assert.Collection(result, item1 => Assert.Equal(10, item1));
+}
 
-            inputBuilder.Advanced.Instance(() => Identity.NewIdentity()).Configure(identity =>
-            {
-                dynamicDataStore.Save(Arg.Any<DdsEntity>())
-                    .Returns(identity)
-                    .AndDoes(x =>
-                    {
-                        var entity = x.ArgAt<DdsEntity>(0);
-                        entities.Add(entity);
-                        dynamicDataStore.Load<DdsEntity>(Arg.Is<Identity>(i => i == identity)).Returns(entity);
-                    });
-            });
-        });
-    });
+[Fact]
+public void Read_GivenIncompatibleDataStore_Throws()
+{
+  // arrange
+  var sut = SystemUnderTest.For<DataRepository>(arrange =>
+  {
+    SetHappyPath(arrange);
+
+    // Breaking the happy path!
+    // Get the list of data entities and modify it such that
+    // a format exception will be thrown.
+    var dataEntities = arrange.GetRequiredService<List<DataEntity>>();
+    dataEntities[0].Value = "this is not an integer";
+  });
+
+  // assert
+  Assert.Throws<FormatException>(() =>
+  {
+    // act
+    sut.Read<int>("my integer store").ToList();
+  });
 }
 ```
 
+And this is the same example but using the SutBuilder to write lambda-less code.
 
+```cs
+[Fact]
+public void Read_GivenCompatibleDataStore_ReturnsAll()
+{
+  // arrange
+  var sutBuilder = new SutBuilder();
 
+  SetHappyPath(sutBuilder.InputBuilder);
+
+  var sut = sutBuilder.CreateSut<DataRepository>();
+
+  // act
+  var result = sut.Read<int>("my integer store");
+
+  // assert
+  Assert.Collection(result, item1 => Assert.Equal(10, item1));
+}
+
+[Fact]
+public void Read_GivenIncompatibleDataStore_Throws()
+{
+  // arrange
+  var sutBuilder = new SutBuilder();
+
+  SetHappyPath(sutBuilder.InputBuilder);
+
+  // Breaking the happy path!
+  // Get the list of data entities and modify it such that
+  // a format exception will be thrown.
+  var dataEntities = sutBuilder.GetRequiredService<List<DataEntity>>();
+  dataEntities[0].Value = "this is not an integer";
+
+  var sut = sutBuilder.CreateSut<DataRepository>();
+
+  // assert
+  Assert.Throws<FormatException>(() =>
+  {
+    // act
+    sut.Read<int>("my integer store").ToList();
+  });
+}
+```
+
+This is the common "SetHappyPath" method reference above.
+```cs
+protected static void SetHappyPath(InputBuilder arrange)
+{
+  var dataEntities = arrange.Instance<List<DataEntity>>();
+  dataEntities.Add(new() { Id = Guid.NewGuid(), Value = 10, });
+
+  var dataStore = arrange.Instance<IDataStore>();
+  dataStore
+    .LoadAll()
+    .Returns(_ => dataEntities.Select(entity => entity.Clone()));
+
+  arrange
+    .Instance<IDataStoreFactory>()
+    .GetOrCreateStore(default, default)
+    .ReturnsForAnyArgs(dataStore);
+}
+```
+
+See the Example project for more elaborate examples of using the SUT Factory for advanced cases as well as creating test spies, fakes etc.
+
+The SUT factory uses 4 strategies when creating instances for the dependency graph:
+* Using an instance provided by an external service provider.
+* Using the default constructor.
+* A partial instance created by NSubstitute.
+* A substitute instance created by NSubstitute.
+
+The automatic selection of a strategy should be sufficient for most tests. However, the SUT factory does allow manual selection of a specific strategy via the "Advanced" input builder. If greater customization is needed, it is possible to override any strategy by providing a custom implementation through an external service provider when creating the SutBuilder instance.
+
+A note on avoiding flaky tests. Ensure no Singleton instances is shared by multiple tests when using an external service provider. All instances created by the SUT factory is stored in the SutBuilder instance and is therefore local to the test. Sharing a SutBuilder instance in e.g. SetUp methods is discouraged.
+
+Any instance can be retrieved for configuration and inspection. Both the SutBuilder and the supporting InputBuilder implement the IServiceProvider interface, allowing the use of the usual GetService and GetRequiredService methods.
