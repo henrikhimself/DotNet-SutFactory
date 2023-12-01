@@ -42,7 +42,7 @@ public void Read_GivenIncompatibleDataStore_Throws()
 }
 ```
 
-And this is the same example but using the SutBuilder to write lambda-less code.
+And this is the same example but using the SutBuilder to write (mostly) lambda-less code.
 
 ```cs
 [Fact]

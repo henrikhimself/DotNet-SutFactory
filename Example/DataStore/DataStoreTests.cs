@@ -45,7 +45,7 @@ public class DataStoreTests
   }
 
   [Fact]
-  public void Read_GivenValidDataFormat_ReturnsAll()
+  public void Read_GivenCompatibleDataStore_ReturnsAll()
   {
     // arrange
     var sut = SystemUnderTest.For<DataRepository>(SetHappyPath);
@@ -61,15 +61,16 @@ public class DataStoreTests
   }
 
   [Fact]
-  public void Read_GivenInvalidDataFormat_Throws()
+  public void Read_GivenIncompatibleDataStore_Throws()
   {
     // arrange
     var sut = SystemUnderTest.For<DataRepository>(arrange =>
     {
       SetHappyPath(arrange);
 
-      // Break the happy path by retrieving the data entities list and change
-      // the data such that we provoke a format exception to be thrown.
+      // Breaking the happy path!
+      // Get the list of data entities and modify it such that
+      // a format exception will be thrown.
       arrange.Instance<List<DataEntity>>().ForEach(entity => entity.Value = "not an integer");
     });
 
