@@ -87,12 +87,12 @@ public void Read_GivenIncompatibleDataStore_Throws()
 }
 ```
 
-This is the common "SetHappyPath" method reference above.
+This is the common "SetHappyPath" method referenced above.
 ```cs
 protected static void SetHappyPath(InputBuilder arrange)
 {
   var dataEntities = arrange.Instance<List<DataEntity>>();
-  dataEntities.Add(new() { Id = Guid.NewGuid(), Value = 10, });
+  dataEntities.Add(new(10) { Id = Guid.NewGuid(), });
 
   var dataStore = arrange.Instance<IDataStore>();
   dataStore
@@ -106,16 +106,16 @@ protected static void SetHappyPath(InputBuilder arrange)
 }
 ```
 
-See the Example project for more elaborate examples of using the SUT Factory for advanced cases as well as creating test spies, fakes etc.
+See the test/Example project for more elaborate examples of using the SUT Factory for advanced cases as well as creating test spies, fakes etc.
 
-The SUT factory uses 4 strategies when creating instances for the dependency graph:
+The SUT factory uses 4 strategies when creating instances:
 * Using an instance provided by an external service provider.
-* Using the default constructor.
+* Using a constructor.
 * A partial instance created by NSubstitute.
 * A substitute instance created by NSubstitute.
 
-The automatic selection of a strategy should be sufficient for most tests. However, the SUT factory does allow manual selection of a specific strategy via the "Advanced" input builder. If greater customization is needed, it is possible to override any strategy by providing a custom implementation through an external service provider when creating the SutBuilder instance.
+The automatic selection of a strategy should be sufficient for most tests. However, the SutBuilder does allow manual selection of a specific strategy via the "Advanced" input builder. If greater customization is needed, it is possible to replace a strategy by providing a custom implementation through an external service provider when creating the SutBuilder instance. The strategy selection will always prefer creating configurable substitutes unless an explicitly interface/implementation pair is registered. In this case, the implementation will be used where the interface is injected into constructors.
+
+Any instance can be retrieved for configuration and inspection. Both the SutBuilder and InputBuilder implement the IServiceProvider interface, allowing the use of the usual GetService and GetRequiredService methods.
 
 A note on avoiding flaky tests. Ensure no Singleton instances is shared by multiple tests when using an external service provider. All instances created by the SUT factory is stored in the SutBuilder instance and is therefore local to the test. Sharing a SutBuilder instance in e.g. SetUp methods is discouraged.
-
-Any instance can be retrieved for configuration and inspection. Both the SutBuilder and the supporting InputBuilder implement the IServiceProvider interface, allowing the use of the usual GetService and GetRequiredService methods.

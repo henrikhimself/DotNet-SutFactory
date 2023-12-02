@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <RunSettings>
+  <RunConfiguration>
+    <MaxCpuCount>0</MaxCpuCount>
+  </RunConfiguration>
   <DataCollectionRunSettings>
     <DataCollectors>
       <DataCollector friendlyName="XPlat code coverage">
@@ -15,4 +18,20 @@
       </DataCollector>
     </DataCollectors>
   </DataCollectionRunSettings>
+  <xUnit>
+    <AppDomain>denied</AppDomain>
+    <DiagnosticMessages>false</DiagnosticMessages>
+    <FailSkips>false</FailSkips>
+    <InternalDiagnosticMessages>false</InternalDiagnosticMessages>
+    <LongRunningTestSeconds>0</LongRunningTestSeconds>
+    <MaxParallelThreads>0</MaxParallelThreads>
+    <MethodDisplay>classAndMethod</MethodDisplay>
+    <MethodDisplayOptions>none</MethodDisplayOptions>
+    <NoAutoReporters>false</NoAutoReporters>
+    <ParallelizeAssembly>true</ParallelizeAssembly>
+    <ParallelizeTestCollections>true</ParallelizeTestCollections>
+    <PreEnumerateTheories>true</PreEnumerateTheories>
+    <ReporterSwitch>quiet</ReporterSwitch>
+    <StopOnFail>false</StopOnFail>
+  </xUnit>
 </RunSettings>
