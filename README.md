@@ -92,7 +92,7 @@ This is the common "SetHappyPath" method referenced above.
 protected static void SetHappyPath(InputBuilder arrange)
 {
   var dataEntities = arrange.Instance<List<DataEntity>>();
-  dataEntities.Add(new(10) { Id = Guid.NewGuid(), });
+  dataEntities.Add(new() { Id = Guid.NewGuid(), Value = 10, });
 
   var dataStore = arrange.Instance<IDataStore>();
   dataStore
