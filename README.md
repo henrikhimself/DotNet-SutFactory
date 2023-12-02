@@ -114,7 +114,7 @@ The SUT factory uses 4 strategies when creating instances:
 * A partial instance created by NSubstitute.
 * A substitute instance created by NSubstitute.
 
-The automatic selection of a strategy should be sufficient for most tests. However, the SutBuilder does allow manual selection of a specific strategy via the "Advanced" input builder. If greater customization is needed, it is possible to replace a strategy by providing a custom implementation through an external service provider when creating the SutBuilder instance. The strategy selection will always prefer creating configurable substitutes unless an explicitly interface/implementation pair is registered. In this case, the implementation will be used where the interface is injected into constructors.
+The automatic selection of a strategy should be sufficient for most tests. However, the SutBuilder does allow manual selection of a specific strategy via the "Advanced" input builder. If greater customization is needed, it is possible to replace a strategy by providing a custom implementation through an external service provider when creating the SutBuilder instance. The strategy selection will always prefer creating configurable substitutes unless an explicit interface/implementation pair is registered. In this case, the implementation will be used where the interface is injected into constructors.
 
 Any instance can be retrieved for configuration and inspection. Both the SutBuilder and InputBuilder implement the IServiceProvider interface, allowing the use of the usual GetService and GetRequiredService methods.
 
