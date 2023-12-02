@@ -9,7 +9,7 @@ namespace Hj.SutFactory;
 
 public class SutBuilder : ISutBuilderProvider, IServiceProvider
 {
-  private readonly InputCollection? _registryInputCollection = new();
+  private readonly InputCollection _registryInputCollection = new();
   private readonly IServiceProvider _sutBuilderServiceProvider;
   private readonly Lazy<IInputRegistry> _inputRegistry;
   private readonly Lazy<IInstanceFactory> _instanceFactory;

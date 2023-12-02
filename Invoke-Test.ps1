@@ -4,7 +4,7 @@ Set-StrictMode -Version Latest
 $InformationPreference = 'Continue'
 
 <# Global #>
-[string]$UpdateTestReportScript = Join-Path $PSScriptRoot 'Script' 'Update-TestReport.ps1'
+[string]$UpdateTestReportScript = Join-Path $PSScriptRoot 'scripts' 'Update-TestReport.ps1'
 [string]$SourceSolutionPath = Join-Path $PSScriptRoot 'SutFactory.sln'
 [string]$TestReportPath = Join-Path $PSScriptRoot 'TestReport'
 

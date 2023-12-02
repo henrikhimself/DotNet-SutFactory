@@ -6,5 +6,5 @@
       "**/obj": true,
       "**/.config": true,
       "TestReport": true
-    },
+    }
 }

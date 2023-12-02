@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net462;net6.0</TargetFrameworks>
+    <LangVersion>12</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>true</IsPackable>
+    <IsTestProject>false</IsTestProject>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <RootNamespace>Hj.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <PackageId>HenrikJensen.SutFactory</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Henrik Jensen</Authors>
+    <Company>Henrik Jensen</Company>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath=""/>
+    <None Include="..\LICENSE" Pack="true" PackagePath=""/>
+  </ItemGroup>
+
+</Project>
