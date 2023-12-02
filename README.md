@@ -106,7 +106,7 @@ protected static void SetHappyPath(InputBuilder arrange)
 }
 ```
 
-See the test/Example project for more elaborate examples of using the SUT Factory for advanced cases as well as creating test spies, fakes etc.
+See the Example project for more elaborate examples of using the SUT Factory for advanced cases as well as creating test spies, fakes etc.
 
 The SUT factory uses 4 strategies when creating instances:
 * Using an instance provided by an external service provider.
