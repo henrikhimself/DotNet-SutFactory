@@ -167,7 +167,7 @@ public class CartTests
     // price service mocks defined here.
     var productService = inputBuilder.Instance<IProductService, ProductService>();
 
-    // Mock the catalogue service.
+    // Seed the catalogue service with items for sale.
     var catalogueService = inputBuilder.Instance<ICatalogueService>();
     var catalogueItemList = new List<CatalogueItem>() { _rock, _paper, _scissor, };
     catalogueService.GetCatalogueItems().Returns(catalogueItemList);
