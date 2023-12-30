@@ -1,32 +1,16 @@
-﻿namespace Hj.SutFactory.Example.DataStore;
+namespace Hj.SutFactory.Example.DataStore;
 
+/// <summary>
+/// These tests favors using the SystemUnderTest.For<T> extension method.
+/// This is a good choice because it promotes an "arrange" phase that is clearly
+/// seperated from the act and assert phase.
+///
+/// See the ShoppingCart example for how the SutBuilder can be used to avoid
+/// using the "arrange" lambda.
+/// </summary>
 public class DataStoreTests
 {
   private static readonly Guid _knownEntityId = new("00000000-0000-0000-0000-000000000001");
-
-  [Fact]
-  public void Create_GivenValue_SavesValue()
-  {
-    // arrange
-    // Declare a test spy for later verification by the test.
-    List<DataEntity>? dataEntitiesSpy = null;
-
-    var sut = SystemUnderTest.For<DataRepository>(arrange =>
-    {
-      SetHappyPath(arrange);
-
-      // Retrieve the data entities list set by the happy path.
-      dataEntitiesSpy = arrange.GetService<List<DataEntity>>();
-    });
-
-    // act
-    var result = sut.Create("my decimal store", 30m);
-
-    // assert
-    Assert.NotNull(dataEntitiesSpy);
-    var entity = dataEntitiesSpy.Single(item => item.Id == result);
-    Assert.Equal(30m, entity.Value);
-  }
 
   [Fact]
   public void Create_GivenSaveReturnEmptyIdentity_Throws()
@@ -37,11 +21,36 @@ public class DataStoreTests
       SetHappyPath(arrange);
 
       // Break the happy path by configuring the Save method to return an empty identity.
-      arrange.Instance<IDataStore>().Save(Arg.Any<DataEntity>()).Returns(Guid.Empty);
+      arrange.GetRequiredService<IDataStore>()
+        .Save(Arg.Any<DataEntity>())
+        .Returns(Guid.Empty);
     });
 
     // act & assert
     Assert.Throws<InvalidOperationException>(() => sut.Create("my decimal store", 30m));
+  }
+
+  [Fact]
+  public void Create_GivenValue_SavesValue()
+  {
+    // arrange
+    List<DataEntity>? dataEntitiesSpy = null;
+
+    var sut = SystemUnderTest.For<DataRepository>(arrange =>
+    {
+      SetHappyPath(arrange);
+
+      // Retrieve the data entities list set by the happy path so that it can be verified later.
+      dataEntitiesSpy = arrange.GetService<List<DataEntity>>();
+    });
+
+    // act
+    var result = sut.Create("my decimal store", 30m);
+
+    // assert
+    Assert.NotNull(dataEntitiesSpy);
+    var entity = dataEntitiesSpy.Single(item => item.Id == result);
+    Assert.Equal(30m, entity.Value);
   }
 
   [Fact]
@@ -68,10 +77,9 @@ public class DataStoreTests
     {
       SetHappyPath(arrange);
 
-      // Breaking the happy path!
-      // Get the list of data entities and modify it such that
-      // a format exception will be thrown.
-      arrange.Instance<List<DataEntity>>().ForEach(entity => entity.Value = "not an integer");
+      // Break the happy path by modifying the data entities such that a format exception will be thrown.
+      arrange.GetRequiredService<List<DataEntity>>()
+        .ForEach(entity => entity.Value = "not an integer");
     });
 
     // act & assert
@@ -82,21 +90,17 @@ public class DataStoreTests
   public void Update_GivenKnownId_UpdatesValue()
   {
     // arrange
-    // Declare a test spy for later verification by the test.
     List<DataEntity>? dataEntitiesSpy = null;
 
     var sut = SystemUnderTest.For<DataRepository>(arrange =>
     {
       SetHappyPath(arrange);
 
-      // Retrieve the data entities list set by the happy path.
+      // Retrieve the data entities list set by the happy path so that it can be verified later.
       dataEntitiesSpy = arrange.GetService<List<DataEntity>>();
     });
 
     // act
-    // It is safe to also change the Type here without affecting the other unit tests. Even though the "known entity"
-    // is part of the "happy path", it is stored inside the SutBuilder instance and this is only known within the scope
-    // of this particular unit test.
     sut.Update("my integer store", _knownEntityId, "100");
 
     // assert
@@ -114,7 +118,9 @@ public class DataStoreTests
       SetHappyPath(arrange);
 
       // Break the happy path by configuring the Save method to return an empty identity.
-      arrange.Instance<IDataStore>().Save(Arg.Any<DataEntity>()).Returns(Guid.Empty);
+      arrange.GetRequiredService<IDataStore>()
+        .Save(Arg.Any<DataEntity>())
+        .Returns(Guid.Empty);
     });
 
     // act & assert
@@ -125,15 +131,14 @@ public class DataStoreTests
   public void Delete_GivenId_RemovesEntity()
   {
     // arrange
-    // Declare a test spy for later verification by the test.
     List<DataEntity>? dataEntitiesSpy = null;
 
     var sut = SystemUnderTest.For<DataRepository>(arrange =>
     {
       SetHappyPath(arrange);
 
-      // Retrieve the data entities list set by the happy path.
-      dataEntitiesSpy = arrange.GetService<List<DataEntity>>();
+      // Retrieve the data entities list set by the happy path so that it can be verified later.
+      dataEntitiesSpy = arrange.GetRequiredService<List<DataEntity>>();
     });
 
     // act
@@ -151,7 +156,9 @@ public class DataStoreTests
     dataEntities.Add(new() { Id = _knownEntityId, Value = 10, });
     dataEntities.Add(new() { Id = Guid.NewGuid(), Value = 20, });
 
-    // A data store fake is configured to use the data entities list.
+    // Create a fake IDataStore that acts like the real service but without the external dependencies.
+    // Each method is configured to alter the data entities list. The content of this list can be
+    // retrieved and verified later in tests.
     var dataStore = inputBuilder.Instance<IDataStore>();
     dataStore.LoadAll().Returns(x => dataEntities.Select(x => x.Clone()));
     dataStore.Load(Arg.Any<Guid>()).Returns(x =>
@@ -190,7 +197,7 @@ public class DataStoreTests
       return Guid.Empty;
     });
 
-    // A data store factory service is configured to return the data store fake.
+    // A data store factory service is configured to return the fake IDataStore.
     var dataStoreFactory = inputBuilder.Instance<IDataStoreFactory>();
     dataStoreFactory.GetOrCreateStore(Arg.Any<string>(), Arg.Any<Type>()).Returns(dataStore);
   }
