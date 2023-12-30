@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Hj.SutFactory.Example.ShoppingCart.Models;
+using Hj.SutFactory.Example.ShoppingCart.Services;
 
 namespace Hj.SutFactory.Example.ShoppingCart;
 

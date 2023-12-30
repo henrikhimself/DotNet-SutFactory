@@ -1,6 +1,6 @@
 using Hj.SutFactory.Example.ShoppingCart.Models;
 
-namespace Hj.SutFactory.Example.ShoppingCart;
+namespace Hj.SutFactory.Example.ShoppingCart.Services;
 
 public class ProductService(
   ICatalogueService catalogueService,

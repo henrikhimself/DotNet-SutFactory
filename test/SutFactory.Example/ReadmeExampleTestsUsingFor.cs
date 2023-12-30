@@ -1,4 +1,5 @@
 ﻿using Hj.SutFactory.Example.DataStore;
+using Hj.SutFactory.Example.DataStore.Models;
 
 namespace Hj.SutFactory.Example;
 
