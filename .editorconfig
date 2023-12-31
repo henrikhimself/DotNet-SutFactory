@@ -216,8 +216,7 @@ dotnet_diagnostic.CA1018.severity = warning
 dotnet_diagnostic.CA1047.severity = warning
 
 # CA1305: Specify IFormatProvider
-# TODO: Renable as warning after https://github.com/dotnet/roslyn-analyzers/issues/6746 is resolved
-dotnet_diagnostic.CA1305.severity = suggestion
+dotnet_diagnostic.CA1305.severity = warning
 
 # CA1507: Use nameof to express symbol names
 dotnet_diagnostic.CA1507.severity = warning
@@ -387,7 +386,7 @@ dotnet_diagnostic.CA2246.severity = warning
 dotnet_diagnostic.CA2249.severity = warning
 
 # CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member'
-dotnet_diagnostic.CS1591.severity = silent
+dotnet_diagnostic.CS1591.severity = none
 
 # IDE0005: Remove unnecessary usings
 dotnet_diagnostic.IDE0005.severity = warning
@@ -453,31 +452,34 @@ dotnet_style_allow_multiple_blank_lines_experimental = false
 dotnet_diagnostic.IDE2000.severity = warning
 
 # The spacing around a C# keyword is incorrect
-dotnet_diagnostic.SA1000.severity = silent
+dotnet_diagnostic.SA1000.severity = none
 
 # A closing parenthesis within a C# statement is not spaced correctly
-dotnet_diagnostic.SA1009.severity = silent
+dotnet_diagnostic.SA1009.severity = none
 
 # An opening square bracket within a C# statement is not spaced correctly
-dotnet_diagnostic.SA1010.severity = silent
+dotnet_diagnostic.SA1010.severity = none
 
 # SA1101: A call to an instance member of the local class or a base class is not prefixed with 'this.', within a C# code file
-dotnet_diagnostic.SA1101.severity = silent
+dotnet_diagnostic.SA1101.severity = none
+
+# SA1515: A single-line comment within C# code is not preceded by a blank line
+dotnet_diagnostic.SA1515.severity = none
 
 # SA1200: A C# using directive is placed outside of a namespace element
-dotnet_diagnostic.SA1200.severity = silent
+dotnet_diagnostic.SA1200.severity = none
 
 # SA1206: The keywords within the declaration of an element do not follow a standard ordering scheme
-dotnet_diagnostic.SA1206.severity = silent
+dotnet_diagnostic.SA1206.severity = none
 
 # SA1309: A field name in C# begins with an underscore
-dotnet_diagnostic.SA1309.severity = silent
+dotnet_diagnostic.SA1309.severity = none
 
 # SA1600: A C# code element is missing a documentation header
-dotnet_diagnostic.SA1600.severity = silent
+dotnet_diagnostic.SA1600.severity = none
 
 # SA1601: A C# partial element is missing a documentation header
-dotnet_diagnostic.SA1601.severity = silent
+dotnet_diagnostic.SA1601.severity = none
 
 # SA1633: A C# code file is missing a standard file header
-dotnet_diagnostic.SA1633.severity = silent
+dotnet_diagnostic.SA1633.severity = none
