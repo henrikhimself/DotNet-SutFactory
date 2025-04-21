@@ -1,10 +1,6 @@
 name: ci
 
-on:
-  push:
-    branches: develop
-  pull_request:
-    branches: develop
+on: [push]
 
 jobs:
   build:
@@ -12,21 +8,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: [ '6.x.x', '8.0.x' ]
+        dotnet-version: [ '6.0.x', '8.0.x' ]
 
     steps:
     - uses: actions/checkout@v4
-
     - name: Setup ${{ matrix.dotnet-version }}
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
-
-    - name: Restore
-      run: dotnet restore
-
     - name: Build
-      run: dotnet build --no-restore
-
+      run: dotnet build
     - name: Test
       run: dotnet test --no-build --logger trx --results-directory "TestResults-${{ matrix.dotnet-version }}"
