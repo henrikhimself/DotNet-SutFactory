@@ -16,4 +16,4 @@ jobs:
     - name: Build
       run: dotnet build
     - name: Test
-      run: dotnet test --no-build --logger trx --results-directory "TestResults"
+      run: dotnet test --no-build
