@@ -1,0 +1,17 @@
+{
+    "dotnet.defaultSolution": "SutFactory.sln",
+    "editor.minimap.enabled": false,
+    "files.exclude": {
+      "**/bin": true,
+      "**/obj": true,
+      "**/.config": true,
+      "TestReport": true
+    },
+    "dotnet.unitTests.runSettingsPath": ".runsettings",
+    "git.enableCommitSigning": true,
+    "csharp.debug.symbolOptions.searchNuGetOrgSymbolServer": true,
+    "csharp.debug.symbolOptions.searchMicrosoftSymbolServer": true,
+    "csharp.debug.justMyCode": true,
+    "csharp.debug.requireExactSource": true,
+    "csharp.debug.suppressJITOptimizations": false
+}

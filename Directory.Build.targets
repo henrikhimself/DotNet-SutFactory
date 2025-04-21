@@ -1,0 +1,17 @@
+<Project>
+
+  <PropertyGroup>
+    <RootNamespace>Hj.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <LangVersion>Latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Authors>Henrik Jensen</Authors>
+    <Description>A System-Under-Test (SUT) factory library simplifying the creation of SUT instances.</Description>
+    <PackageTags>testing;mock;unit-test</PackageTags>
+    <PackageProjectUrl>https://github.com/henrikhimself/DotNet-SutFactory</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/henrikhimself/DotNet-SutFactory.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Version>1.0.0-beta1</Version>
+  </PropertyGroup>
+
+</Project>
