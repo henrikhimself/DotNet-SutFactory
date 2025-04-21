@@ -4,19 +4,14 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        dotnet-version: [ '6.0.x', '8.0.x' ]
-
     steps:
     - uses: actions/checkout@v4
-    - name: Setup ${{ matrix.dotnet-version }}
+    - name: Setup
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: ${{ matrix.dotnet-version }}
+        dotnet-version: '8.0.x'
     - name: Build
       run: dotnet build
     - name: Test
-      run: dotnet test --no-build --logger trx --results-directory "TestResults-${{ matrix.dotnet-version }}"
+      run: dotnet test --no-build --logger trx --results-directory "TestResults"
