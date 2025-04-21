@@ -15,8 +15,7 @@ public class Config : ManualConfig
     var alphabeticalOrderer = new DefaultOrderer(SummaryOrderPolicy.Declared, MethodOrderPolicy.Alphabetical);
 
     AddLogger(ConsoleLogger.Default)
-      .AddJob(Job.MediumRun.WithRuntime(ClrRuntime.Net462).AsBaseline())
-      .AddJob(Job.MediumRun.WithRuntime(CoreRuntime.Core60))
+      .AddJob(Job.MediumRun.WithRuntime(CoreRuntime.Core60).AsBaseline())
       .AddJob(Job.MediumRun.WithRuntime(CoreRuntime.Core80))
       .WithOptions(ConfigOptions.StopOnFirstError | ConfigOptions.JoinSummary | ConfigOptions.DisableLogFile)
       .AddDiagnoser(MemoryDiagnoser.Default)
