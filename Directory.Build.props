@@ -1,14 +1,22 @@
 <Project>
 
   <ItemGroup>
-    <PackageReference Include="NSubstitute" Version="[5.0.0,]" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0">
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
       <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+
+    <PackageReference Include="NSubstitute">
       <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="NSubstitute.Analyzers.CSharp">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="StyleCop.Analyzers">
+      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
 

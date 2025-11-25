@@ -5,7 +5,7 @@ namespace Hj.SutFactory.Example.ShoppingCart;
 public interface ICart
 {
   /// <summary>
-  /// The total price of the items in the cart.
+  /// Gets the total price of the items in the cart.
   /// </summary>
   decimal TotalPrice { get; }
 
@@ -13,6 +13,7 @@ public interface ICart
   /// Adds a cart item to the cart.
   /// </summary>
   /// <param name="cartItem">The cart item to add.</param>
+  /// <returns>The added cart item.</returns>
   CartItem AddItem(CartItem cartItem);
 
   /// <summary>

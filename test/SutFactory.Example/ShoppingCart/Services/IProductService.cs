@@ -7,6 +7,6 @@ public interface IProductService
   /// <summary>
   /// Gets a list of products.
   /// </summary>
-  /// <returns></returns>
+  /// <returns>A list of product items.</returns>
   IEnumerable<ProductItem> GetProducts();
 }
