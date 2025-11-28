@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11222.15 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SutFactory", "src\SutFactory\SutFactory.csproj", "{9945E138-3D64-494C-9229-F716D82DE113}"
 EndProject
@@ -12,6 +12,21 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SutFactory.Benchmarking", "test\SutFactory.Benchmarking\SutFactory.Benchmarking.csproj", "{B6E8F28A-AF8C-4FA9-9282-87D1B4429FCD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SutFactory.TestCase", "test\SutFactory.TestCase\SutFactory.TestCase.csproj", "{DC6156F8-DE4C-4D1F-A4CF-B8F6634B00BC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{09F4ACFD-FD02-48AA-9E9E-284D64A8E34B}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		.runsettings = .runsettings
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		Directory.Packages.props = Directory.Packages.props
+		global.json = global.json
+		nuget.config = nuget.config
+		README.md = README.md
+		stylecop.json = stylecop.json
+		TODO.md = TODO.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
