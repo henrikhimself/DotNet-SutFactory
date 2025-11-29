@@ -1,5 +1,4 @@
 <Project>
-
   <PropertyGroup>
     <RootNamespace>Hj.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <LangVersion>Latest</LangVersion>
@@ -13,5 +12,4 @@
     <RepositoryType>git</RepositoryType>
     <Version>1.0.0-beta2</Version>
   </PropertyGroup>
-
 </Project>
