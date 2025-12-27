@@ -6,7 +6,7 @@ namespace Hj.SutFactory.Example.ShoppingCart;
 
 /// <summary>
 /// These tests uses the SutBuilder in order to use fewer lambdas.
-/// See the DataStore example for how the SystemUnderTest.For'T extension method
+/// See the DataStore example for how the SystemUnderTest.For&lt;T&gt; extension method
 /// can be used to simplify tests when lambdas are tolerated.
 /// </summary>
 public class CartTests
