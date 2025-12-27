@@ -24,6 +24,7 @@ public class Cart(
         {
           price = cartItem.Quantity * product!.Price;
         }
+
         return price;
       });
       return totalPrice;

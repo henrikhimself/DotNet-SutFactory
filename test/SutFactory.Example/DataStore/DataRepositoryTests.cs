@@ -4,7 +4,7 @@ using Hj.SutFactory.Example.DataStore.Services;
 namespace Hj.SutFactory.Example.DataStore;
 
 /// <summary>
-/// These tests favors using the SystemUnderTest.For<T> extension method.
+/// These tests favors using the SystemUnderTest.For&lt;T&gt; extension method.
 /// This is a good choice because it promotes an "arrange" phase that is clearly
 /// seperated from the act and assert phase.
 ///

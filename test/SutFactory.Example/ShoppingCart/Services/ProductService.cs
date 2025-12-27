@@ -16,7 +16,7 @@ public class ProductService(
 
     foreach (var catalogueItem in catalogueItems)
     {
-      var priceItem = priceItems.FirstOrDefault(x => x.Sku == catalogueItem.Sku);
+      var priceItem = priceItems.FirstOrDefault(x => x.sku == catalogueItem.sku);
       if (priceItem is null)
       {
         continue;
@@ -24,9 +24,9 @@ public class ProductService(
 
       yield return new ProductItem()
       {
-        Sku = catalogueItem.Sku,
-        Name = catalogueItem.Name,
-        Price = priceItem.Price,
+        Sku = catalogueItem.sku,
+        Name = catalogueItem.name,
+        Price = priceItem.price,
       };
     }
   }
